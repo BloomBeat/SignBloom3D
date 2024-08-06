@@ -13,11 +13,13 @@ This website is Thai Sign language 3D Gesture Repository, designed for collectin
 
 To run this project locally, you will need to add the following environment variables to your .env file. Create .env file in server folder.
 
-`CONNECTION_STRING` as this is your mongoDB connection string.
-`PASSWORD` as this is your password string for mongoDB.
-`CDN_CLOUD_NAME` as this is your database name from cloudinary server
-`CDN_API_KEY` as this is your api key for cloudinary server
-`CDN_API_SECRET` as this is your api secret for cloudinary server
+`MONGODB_URI` This is your MongoDB URI string to connect with certain collection in the database.
+
+For example,
+
+```bash
+mongodb+srv://myDatabaseUser:D1fficultP%40ssw0rd@mongodb0.example.com/?authSource=admin&replicaSet=myRepl
+```
 
 ## Run Locally
 
@@ -49,7 +51,7 @@ Start developing the application (Both Client and Server)
 
 **Client:** React, React Router Dom, TailwindCSS, ...
 
-**Server:** Node, ExpressJS
+**Server:** Node, ExpressJS, Mongoose
 
 ## Usage
 
