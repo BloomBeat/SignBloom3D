@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import Navbaruser from '../components/Navbaruser';
+import Navbaruser from '../../components/Navbaruser';
+// client/src/components/Navbaruser.jsx
 export const Home = () => {
   const [message, setMessage] = useState("");
 
@@ -12,6 +13,7 @@ export const Home = () => {
   return (
     <div>
       <Navbaruser>
+        
       </Navbaruser>
     </div>
   )
