@@ -25,19 +25,9 @@ export const vocabSuggestions = async (req, res) => {
 
     const categories = await Category.find(query);
 
-    // let categorySuggestions = [];
     let vocabularySuggestions = [];
 
     categories.forEach((category) => {
-      // As this is for search results, this is unnecessary to fetch the suggestions.
-      // if (regex.test(category.category)) {
-      //   categorySuggestions.push({
-      //     name: category.category,
-      //     type: "category",
-      //     category: null,
-      //   });
-      // }
-
       category.vocabularies.forEach((vocab) => {
         if (
           regex.test(vocab.name) &&
@@ -57,11 +47,8 @@ export const vocabSuggestions = async (req, res) => {
     });
 
     const maxSuggestions = 10;
-    // let suggestions = [...categorySuggestions, ...vocabularySuggestions];
-    // suggestions = suggestions.slice(0, maxSuggestions);
     vocabularySuggestions = vocabularySuggestions.slice(0, maxSuggestions);
-    // res.json({ suggestions });
-    res.json({ vocabularySuggestions });
+    res.status(200).json({ vocabularySuggestions });
   } catch (err) {
     console.error("Failed to fetch suggestions:", err);
     res.status(500).json({ error: "Failed to fetch suggestions" });
