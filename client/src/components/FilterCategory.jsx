@@ -5,7 +5,7 @@ const categories = [
     //fetch from backend
 ]
 
-function FilterCategory() {
+function MyCombobox() {
   const [selectedCategory, setSelectedCategory] = useState(categories[0])
   const [query, setQuery] = useState('')
 
