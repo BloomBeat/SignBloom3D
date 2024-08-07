@@ -1,12 +1,11 @@
-import { Fragment, useState } from 'react'
-import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { useState } from 'react'
+import { Combobox } from '@headlessui/react'
 
-const category =[
-//backend
+const categories = [
+    //fetch from backend
 ]
 
-function FilterCategory() {
+function MyCombobox() {
   const [selectedCategory, setSelectedCategory] = useState(categories[0])
   const [query, setQuery] = useState('')
 
