@@ -1,20 +1,13 @@
-import { useState } from 'react'
-import { Combobox } from '@headlessui/react'
+import { Fragment, useState } from 'react'
+import { Listbox, Transition } from '@headlessui/react'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-const categories = [
-    //fetch from backend
+const category =[
+//backend
 ]
 
-function MyCombobox() {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0])
-  const [query, setQuery] = useState('')
-
-  const filteredCategory =
-    query === ''
-      ? categories
-      : categories.filter((person) => {
-          return person.toLowerCase().includes(query.toLowerCase())
-        })
+export default function Filtercategory () {
+  const [selected, setSelected] = useState(categories[0])
 
   return (
     <Combobox value={selectedPerson} onChange={setSelectedPerson}>
