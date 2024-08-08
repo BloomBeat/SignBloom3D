@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import Navbaruser from '../../components/Navbaruser';
+import Searchbar from '../../components/Searchbar'
+import SearchBar from '../../components/Searchbar';
+import Btn from '../../components/Botton';
 
 // client/src/components/Navbaruser.jsx
 export const Home = () => {
@@ -13,9 +16,13 @@ export const Home = () => {
   // return <div className="mt-10 flex w-full flex-col">{message}</div>;
   return (
     <div>
-      <Navbaruser></Navbaruser>
-      <div>
-        <FilterStatus></FilterStatus>
+      <Navbaruser/>
+      <Searchbar/>
+      <div className="flex-grow flex items-center justify-center">
+        <div className="flex items-center space-x-4">
+          <SearchBar />
+          <CustomBtn/>
+        </div>
       </div>
     </div>
  
