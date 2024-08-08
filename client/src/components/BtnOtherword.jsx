@@ -1,11 +1,9 @@
-import { Button } from '@headlessui/react'
-
-function BtnOtherword() {
+function BtnOtherWord() {
   return (
-    <Button className="rounded bg-sky-600 py-2 px-4 text-sm text-white data-[hover]:bg-sky-500 data-[hover]:data-[active]:bg-sky-700">
-      ดูคำอื่น
-    </Button>
-  )
+    <button className="rounded bg-primary-base py-2 px-4 text-sm text-white hover:bg-sky-500 active:bg-sky-700">
+      ดูคำอื่นๆ
+    </button>
+  );
 }
 
-//not fetch with backend yet
+export default BtnOtherWord;
