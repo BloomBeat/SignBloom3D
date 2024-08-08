@@ -1,4 +1,5 @@
 import User from "../models/user.js";
+
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -23,6 +24,9 @@ export const userLogin = async (req, res) => {
       .send("passerd validated Email and password are required");
   }
 
+
+
+  // get user email and find userid**
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(404).send("User not found");
@@ -36,8 +40,7 @@ export const userLogin = async (req, res) => {
 
   // Generate JWT token
   const token = jwt.sign(
-    //{ id: decoded.userID, email: user.email },
-    { id: user._id, email: user.email }, //GPT changes
+    { id: decoded.userID, email: user.email },
     process.env.JWT_SECRET,
     {
       expiresIn: "1h",
