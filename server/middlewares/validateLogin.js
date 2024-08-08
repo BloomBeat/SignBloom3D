@@ -1,37 +1,36 @@
-import express from "express";
-import helmet from "helmet"; //add for resolve Content Security Policy (CSP) issue.
+//import helmet from "helmet"; //add for resolve Content Security Policy (CSP) issue.
 
-const app = express();
+// const app = express();
 
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        "script-src": ["'self'", "'unsafe-inline'"],
-      },
-    },
-  })
-);
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+//       directives: {
+//         "script-src": ["'self'", "'unsafe-inline'"],
+//       },
+//     },
+//   })
+// );
 
-const validateUser = (req, res, next) => {
-  const { username, password } = req.body;
+const validateLogin = (req, res, next) => {
+  //now still not pass validate
+  const { email, password } = req.body; //check that used username/email !!!
 
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ error: "Username and password are required" });
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
   }
 
-  if (typeof username !== "string" || typeof password !== "string") {
+  if (typeof email !== "string" || typeof password !== "string") {
     return res
       .status(400)
-      .json({ error: "Username and password must be strings" });
+      .json({ error: "Email and password must be strings" });
   }
 
-  if (username.length < 3 || username.length > 20) {
+  if (email.length < 3 || email.length > 20) {
+    //not related to login
     return res
       .status(400)
-      .json({ error: "Username must be between 3 and 20 characters" });
+      .json({ error: "Email must be between 3 and 20 characters" });
   }
 
   if (password.length < 8) {
@@ -44,4 +43,4 @@ const validateUser = (req, res, next) => {
   next();
 };
 
-export default validateUser;
+export default validateLogin;
