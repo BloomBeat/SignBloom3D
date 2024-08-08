@@ -10,8 +10,8 @@ connectToDatabase();
 
 // Middleware, routes, etc.
 app.use(express.json());
-app.use("/api", vocabRouter);
-app.use("/ticket", ticketRouter);
+app.use("/api/vocab", vocabRouter);
+app.use("/api/ticket", ticketRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {
