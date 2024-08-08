@@ -15,8 +15,13 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+<<<<<<< HEAD
+    "mongoose": "^8.5.2",
+    "yup": "^1.4.0"
+=======
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2"
+>>>>>>> d4407c3 (Update : change npm->pnpm)
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
