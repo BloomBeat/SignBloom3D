@@ -23,7 +23,6 @@ export const userLogin = async (req, res) => {
       .send("passerd validated Email and password are required");
   }
 
-  // get user email and find userid**
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(404).send("User not found");
