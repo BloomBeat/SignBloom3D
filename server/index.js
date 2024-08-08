@@ -2,9 +2,8 @@
 import express from "express";
 import cors from "cors";
 import { connectToDatabase } from "./configs/db.config.js";
-import userRouter from "./routes/user.js";
-import vocabRouter from "./routes/vocab.js";
-import ticketRouter from "./routes/ticket.js";
+import router from "./routes/vocab.js"; // Updated import
+import userRouter from "./routes/user.js"; // Updated import
 const app = express();
 
 app.use(cors());
