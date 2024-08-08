@@ -22,7 +22,6 @@
 =======
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2"
->>>>>>> d4407c3 (Update : change npm->pnpm)
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
