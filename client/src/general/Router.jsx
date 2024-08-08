@@ -10,8 +10,10 @@ import { RoutePaths } from "./RoutePaths.jsx";
 import { Home } from "../pages/home/HomePage.jsx";
 import { NotFound } from "./NotFound.jsx";
 import { Layout } from "./Layout.jsx";
+import Navbaruser from "../components/Navbaruser.jsx";
 
 export const Router = () => (
+
   <Routes>
     <Route
       //
@@ -19,6 +21,7 @@ export const Router = () => (
       element={
         // What will be rendered
         <Layout>
+          <Navbaruser/>
           <Home />
         </Layout>
       }
@@ -28,6 +31,7 @@ export const Router = () => (
       path="*" // localhost:5173/3D 
       element={
         <Layout>
+          <Navbaruser/>
           <NotFound />
         </Layout>
       }

@@ -6,6 +6,8 @@ export const Home = () => {
   const [message, setMessage] = useState("");
 
   return (
-   <Navbaruser></Navbaruser>
+    <div>
+     
+    </div>
   )
 };

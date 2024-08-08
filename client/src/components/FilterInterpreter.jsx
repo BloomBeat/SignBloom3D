@@ -11,7 +11,7 @@ const interpreters= [
 ]
 
 function FilterInterpreter(){
-  const [SelectInterpreter, setSelectInterpreter] = useState(interpreters[0])
+  const [selectInterpreter, setSelectInterpreter] = useState(interpreters[0])
   const [query, setQuery] = useState('')  
   const Filterinterpreter =
     query == ''
@@ -21,7 +21,7 @@ function FilterInterpreter(){
       })
 
   return (
-    <Combobox value={SelectInterpreter} onChange={setSelectInterpreter} onClose={() => setQuery('')}>
+    <Combobox value={selectInterpreter} onChange={setSelectInterpreter} onClose={() => setQuery('')}>
       <ComboboxInput
        aria-label='Assignee'
        displayValue={(interpreters)=> interpreters?.name}
