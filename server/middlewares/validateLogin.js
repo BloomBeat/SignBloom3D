@@ -3,13 +3,12 @@ import helmet from "helmet"; //add for resolve Content Security Policy (CSP) iss
 
 const app = express();
 
-app.use(helmet());
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "script-src": ["'self'", "'unsafe-inline'"],
+      },
     },
   })
 );
