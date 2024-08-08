@@ -45,4 +45,4 @@ const validateUser = (req, res, next) => {
   next();
 };
 
-module.exports = validateUser;
+export default validateUser;
