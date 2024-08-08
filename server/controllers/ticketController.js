@@ -12,15 +12,16 @@ export const getTicket = async (req, res) => {
 
 export const createTicket = async (req, res) => {
   try {
-    const { vocabulary_id, user_id, description } = req.body;
+    const { title, vocabulary_id, user_id, description } = req.body;
 
     // Validate input
-    if (!vocabulary_id || !user_id || !description) {
+    if (!title || !vocabulary_id || !user_id || !description) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
     // Create a new ticket
     const ticket = new Ticket({
+      title,
       vocabulary_id,
       user_id,
       description,
@@ -35,6 +36,7 @@ export const createTicket = async (req, res) => {
       id: ticket._id,
       vocabulary_id: ticket.vocabulary_id,
       user_id: ticket.user_id,
+      title: ticket.title,
       description: ticket.description,
       status: ticket.status,
       admin_comments: ticket.admin_comments,

@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const ticketSchema = new mongoose.Schema(
   {
+    title: {
+      type: String,
+      required: true,
+    },
     vocabulary_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -15,12 +19,12 @@ const ticketSchema = new mongoose.Schema(
     description: { type: String, required: true },
     status: {
       type: String,
-      enum: ["open", "in progress", "closed", "on hold"], // Include "on hold"
+      enum: ["open", "in progress", "closed", "on hold"],
       required: true,
     },
     created_at: { type: Date, required: true, default: Date.now },
     updated_at: { type: Date, required: true, default: Date.now },
-    admin_comments: { type: String }, // Optional field
+    admin_comments: { type: String },
   },
   {
     versionKey: false, // reject "__v" as this is the field generated from mongoose
