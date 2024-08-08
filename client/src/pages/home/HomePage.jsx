@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbaruser from '../../components/Navbaruser';
 import SearchBar from '../../components/Searchbar';
-import CustomBtn from '../../components/Botton';
+import Btn from '../../components/Botton';
 
 // client/src/components/Navbaruser.jsx
 export const Home = () => {
@@ -18,8 +18,8 @@ export const Home = () => {
       <Navbaruser/>
       <div className="flex-grow flex items-center justify-center">
         <div className="flex items-center space-x-4">
-          <SearchBar />
-          <CustomBtn/>
+          <SearchBar/>
+          <Btn label="ดาวน์โหลด"/>
         </div>
       </div>
     </div>
