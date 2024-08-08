@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectToDatabase } from "./configs/db.config.js";
 import router from "./routes/vocab.js"; // Updated import
 import userRouter from "./routes/user.js"; // Updated import
+import userRouter from "./routes/user.js"; // Updated import
 const app = express();
 
 app.use(cors());
