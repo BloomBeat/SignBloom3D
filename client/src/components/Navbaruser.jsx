@@ -7,7 +7,7 @@ const Navbaruser = () => {
           <div className="flex justify-between h-16">
             <div className="flex-shrink-0 flex items-center">
               {/* Logo */}
-              <img className="h-8 w-auto" src="client/public/favicon.ico" alt="Logo" />
+              <img className="h-8 w-auto" src="./public/SignBloom3DLogo.png" alt="Logo" />
             </div>
             
             {/* This empty div keeps the space in the middle */}
