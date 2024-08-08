@@ -2,41 +2,42 @@ import React from 'react'
 import {useState} from React
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
 
-const interpr = [
+const interpreters= [
   {id: 1 ,name: 'ล่ามโทรทัศน์'},
-  {id: 2 ,name: 'ล่ามทั่วไป'},
+  {id: 2 ,name: 'ล่ามชุมชน'},
+  {id: 3 ,name: 'คนหูดี'},
+  {id: 4 ,name: 'คนหูตึง'},
+  {id: 5 ,name: 'คนหูหนวก'},
 ]
 
-function FilterInterpr(){
-  const [SelectedInterpr, setSelectedInterpr] = useState(interpr[0])
+function FilterInterpreter(){
+  const [selectInterpreter, setSelectInterpreter] = useState(interpreters[0])
   const [query, setQuery] = useState('')  
-  const Filterinterpr =
+  const Filterinterpreter =
     query == ''
-      ? interpr
-      : interpr.filter((interpr) =>{
-          return interpr.name.toLowerCase().includes(query.toLowerCase())
+      ? interpreters
+      : interpreters.filter((interpreters) =>{
+          return interpreters.name.toLowerCase().includes(query.toLowerCase())
       })
-  
+
   return (
-    <Combobox value={SelectedInterpr} onChange={setSelectedInterpr} onClose={() => setQuery('')}>
+    <Combobox value={selectInterpreter} onChange={setSelectInterpreter} onClose={() => setQuery('')}>
       <ComboboxInput
        aria-label='Assignee'
-       displayValue={(interpr)=> interpr?.name}
+       displayValue={(interpreters)=> interpreters?.name}
        onChange={(event) => setQuery(event.target.value)}
        />
     <ComboboxOptions anchor="bottom" className="border empty:invisible" >
-      {filteredinterpr.map((interpr)=>(
-        <ComboboxOption key={interpr.id} value={interpr} className="group flex gap-2 bg-white data-[focus]:bg-blue-100"> 
+      {FilterInterpreter.map((interpreters)=>(
+        <ComboboxOption key={interpreters.id} value={interpreters} className="group flex gap-2 bg-white data-[focus]:bg-blue-100"> 
           <CheckIcon className="invisible size-5 group-data-[selected]:visible"/>
-          {interpr.name}
+          {interpreters.name}
         </ComboboxOption>
       ))}
     </ComboboxOptions>
-  
+
     </Combobox>
   )
 }
 
-export default FilterInterpr;
-
-//not fetch witd backend yet
+export default FilterInterpreter

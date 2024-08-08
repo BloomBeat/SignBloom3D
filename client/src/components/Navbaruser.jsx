@@ -7,9 +7,11 @@ const Navbaruser = () => {
           <div className="flex justify-between h-16">
             <div className="flex-shrink-0 flex items-center">
               {/* Logo */}
-              <img className="h-8 w-auto" src="client/public/favicon.ico" alt="Logo" />
+              {/* <img className="h-8 w-auto" src="./public/SignBloom3DLogo.png" alt="Logo" /> */}
+              <div className="text-xl font-bold bg-gradient-to-r from-[#64558E_65.5%] to-[#EBDDFF_98.5%] bg-clip-text text-transparent">
+                SignPose3D
+              </div>
             </div>
-            
             {/* This empty div keeps the space in the middle */}
             <div className="flex-grow"></div>
   
@@ -23,8 +25,8 @@ const Navbaruser = () => {
   
               {/* Buttons */}
               <div className="ml-6 flex items-center">
-                <button className="bg-primary-base text-primary-content hover:bg-blue-50 px-4 py-2 rounded-md text-sm font-medium">ลงทะเบียน</button>
-                <button className="ml-4 bg-secondary-base text-secondary-content hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium">เข้าสู่ระบบ</button>
+                <button className="bg-primary-base text-primary-content hover:bg-gray-600 px-4 py-2 rounded-md text-sm font-medium">ลงทะเบียน</button>
+                <button className="ml-4 bg-secondary-base text-secondary-content  hover:bg-gray-600 px-4 py-2 rounded-md text-sm font-medium">เข้าสู่ระบบ</button>
               </div>
             </div>
           </div>
