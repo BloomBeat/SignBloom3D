@@ -46,7 +46,7 @@ export const userRegister = async (req, res) => {
       picture_profile,
       role,
     } = req.body;
-
+    console.log("Registering user with data:", req.body);
     // Check if all required fields are provided
     if (
       !email ||
@@ -90,39 +90,16 @@ export const userRegister = async (req, res) => {
       picture_profile,
       role,
     });
-
+    console.log("New user to be saved:", newUser);
     // Save user to database
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
+    console.error("Validation Error:", error.errors);
     res
       .status(500)
       .json({ message: "Error registering user", error: error.message });
+    console.log("error is here:", error.message);
   }
 };
-
-//hashed password
-// // Test controller to add info to DB for testing hashed password
-// export const testAddUser = async (req, res) => {
-//   try {
-//     const { email, password } = req.body
-
-//     // Hash the password
-//     const salt = await bcrypt.genSalt(10)
-//     const hashedPassword = await bcrypt.hash(password, salt)
-
-//     // Create new user with hashed password
-//     const newUser = new User({
-//       email,
-//       password: hashedPassword
-//     })
-
-//     // Save user to database
-//     await newUser.save()
-
-//     res.status(201).json({ message: "Test user created successfully" })
-//   } catch (error) {
-//     res.status(500).json({ message: "Error creating test user", error: error.message })
-//   }
-// }
