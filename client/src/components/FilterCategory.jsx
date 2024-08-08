@@ -1,17 +1,9 @@
-<<<<<<< HEAD
 import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
 const category =[
 //backend
-=======
-import { useState } from 'react'
-import { Combobox } from '@headlessui/react'
-
-const categories = [
-    //fetch from backend
->>>>>>> component-intialization
 ]
 
 function MyCombobox() {
