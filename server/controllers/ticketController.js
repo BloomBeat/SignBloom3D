@@ -21,9 +21,9 @@ export const createTicket = async (req, res) => {
 
     // Create a new ticket
     const ticket = new Ticket({
-      title,
       vocabulary_id,
       user_id,
+      title,
       description,
       status: "open",
       admin_comments: "", // Default value
@@ -85,11 +85,12 @@ export const updateTicket = async (req, res) => {
 export const deleteTicket = async (req, res) => {
   try {
     const { id } = req.query;
+    // console.log(id);
     const deletedTicket = await Ticket.findByIdAndDelete(id);
     if (!deletedTicket) {
       return res.status(404).json({ message: "Ticket not found" });
     }
-    res.status(204).json({ message: `deleted ticket: ${id} successfully` });
+    res.status(200).json({ message: `deleted ticket ${id} successfully` });
   } catch (err) {
     console.error("Failed to delete ticket:", err);
     res.status(500).json({ error: "Failed to delete ticket" });
