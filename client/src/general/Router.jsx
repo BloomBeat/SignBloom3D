@@ -10,6 +10,7 @@ import { RoutePaths } from "./RoutePaths.jsx";
 import { Home } from "../pages/home/HomePage.jsx";
 import { NotFound } from "./NotFound.jsx";
 import { Layout } from "./Layout.jsx";
+import { Vocabulary } from "../pages/vocabulary/VocabularyPage.jsx";
 
 export const Router = () => (
   <Routes>
@@ -29,6 +30,14 @@ export const Router = () => (
       element={
         <Layout>
           <NotFound />
+        </Layout>
+      }
+    /> 
+    <Route
+      path="vocabulary" // localhost:5173/vocabulary
+      element={
+        <Layout>
+          <Vocabulary />
         </Layout>
       }
     /> 

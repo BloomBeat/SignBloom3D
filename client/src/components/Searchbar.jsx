@@ -31,7 +31,7 @@ function SearchBar() {
 
   return (
     <Combobox value={selectedSearch} onChange={setSelectedSearch}>
-      <div className="relative w-full max-w-xs mx-auto">
+      <div className="relative w-full mx-auto">
         <Combobox.Input
           className="w-full py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
           onChange={(event) => setQuery(event.target.value)}
