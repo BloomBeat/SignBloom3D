@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import Navbaruser from '../../components/Navbaruser';
 import SearchBar from '../../components/Searchbar';
-import BtnFind from '../../components/BtnFind';
+import Btn from '../../components/Botton';
 
 export const HomePage = () => {
   const [message, setMessage] = useState("");
@@ -12,8 +12,8 @@ export const HomePage = () => {
       <Navbaruser/>
       <div className="flex-grow flex items-center justify-center">
         <div className="flex items-center space-x-4">
-          <SearchBar />
-          <BtnFind/>
+          <SearchBar/>
+          <Btn label="ดาวน์โหลด"/>
         </div>
       </div>
     </div>
