@@ -1,8 +1,17 @@
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-// import dotenv from "dotenv";
-// import dotenv from "dotenv";
+
+​/**
+​ * Handles user login by verifying email and password, and generating a JWT token.
+​ *
+​ * @param {Object} req - The request object containing the user's email and password.
+​ * @param {string} req.body.email - The user's email.
+​ * @param {string} req.body.password - The user's password.
+​ * @param {Object} res - The response object to send back to the client.
+​ *
+​ * @returns {Object} - The response object with a token if successful, or an error message if unsuccessful.
+​ */
 
 export const userLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -40,51 +49,79 @@ export const userLogin = async (req, res) => {
 
   res.send({ token });
 };
-//hashed password
-// // Test controller to add info to DB for testing hashed password
-// export const testAddUser = async (req, res) => {
-//   try {
-//     const { email, password } = req.body
 
-//     // Hash the password
-//     const salt = await bcrypt.genSalt(10)
-//     const hashedPassword = await bcrypt.hash(password, salt)
+export const userRegister = async (req, res) => {
+  try {
+    const {
+      email,
+      password,
+      firstname,
+      lastname,
+      age,
+      hearing_level,
+      interpreter_group,
+      curriculum,
+      curr_time,
+      institution,
+      picture_profile,
+      role,
+    } = req.body;
+    console.log("Registering user with data:", req.body);
+    // Check if all required fields are provided
+    if (
+      !email ||
+      !password ||
+      !firstname ||
+      !lastname ||
+      !age ||
+      !hearing_level ||
+      !interpreter_group ||
+      !curriculum ||
+      !curr_time ||
+      !institution ||
+      !picture_profile ||
+      !role
+    ) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-//     // Create new user with hashed password
-//     const newUser = new User({
-//       email,
-//       password: hashedPassword
-//     })
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
 
-//     // Save user to database
-//     await newUser.save()
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-//     res.status(201).json({ message: "Test user created successfully" })
-//   } catch (error) {
-//     res.status(500).json({ message: "Error creating test user", error: error.message })
-//   }
-// }
-//hashed password
-// // Test controller to add info to DB for testing hashed password
-// export const testAddUser = async (req, res) => {
-//   try {
-//     const { email, password } = req.body
+    // Create new user
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      firstname,
+      lastname,
+      age,
+      hearing_level,
+      interpreter_group,
+      curriculum,
+      curr_time: new Date(curr_time),
+      institution,
+      picture_profile,
+      role,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
 
-//     // Hash the password
-//     const salt = await bcrypt.genSalt(10)
-//     const hashedPassword = await bcrypt.hash(password, salt)
-
-//     // Create new user with hashed password
-//     const newUser = new User({
-//       email,
-//       password: hashedPassword
-//     })
-
-//     // Save user to database
-//     await newUser.save()
-
-//     res.status(201).json({ message: "Test user created successfully" })
-//   } catch (error) {
-//     res.status(500).json({ message: "Error creating test user", error: error.message })
-//   }
-// }
+    console.log("New user to be saved:", newUser);
+    // Save user to database
+    await newUser.save();
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    console.error("Validation Error:", error.errors);
+    res
+      .status(500)
+      .json({ message: "Error registering user", error: error.message });
+    console.log("error is here:", error);
+  }
+};
