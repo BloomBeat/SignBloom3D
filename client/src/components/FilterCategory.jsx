@@ -1,9 +1,10 @@
-import { Fragment, useState } from 'react'
-import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-const category =[
-//backend
+import { useState } from 'react'
+import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
+
+
+const categories = [
+  //fetch from backend
 ]
 
 function MyCombobox() {
@@ -19,14 +20,14 @@ function MyCombobox() {
 
   return (
     <Combobox value={selectedPerson} onChange={setSelectedPerson}>
-      <Combobox.Input onChange={(event) => setQuery(event.target.value)} />
-      <Combobox.Options>
+      <ComboboxInput onChange={(event) => setQuery(event.target.value)} />
+      <ComboboxOptions>
         {filteredPeople.map((person) => (
-          <Combobox.Option key={person} value={person}>
+          <ComboboxOption key={person} value={person}>
             {person}
-          </Combobox.Option>
+          </ComboboxOption>
         ))}
-      </Combobox.Options>
+      </ComboboxOptions>
     </Combobox>
   )
 }

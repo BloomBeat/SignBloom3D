@@ -26,8 +26,8 @@ function SearchBar() {
     query === ''
       ? searchResults
       : searchResults.filter((item) =>
-          item.name.toLowerCase().includes(query.toLowerCase())
-        );
+         item.name.toLowerCase().includes(query.toLowerCase())
+      );
 
   return (
     <Combobox value={selectedSearch} onChange={setSelectedSearch}>
