@@ -7,6 +7,7 @@ import vocabRouter from "./routes/vocab.js";
 import ticketRouter from "./routes/ticket.js";
 const app = express();
 
+app.use(cors());
 connectToDatabase();
 
 app.use(express.json());
