@@ -2,7 +2,7 @@ import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-​/**
+/**
 ​ * Handles user login by verifying email and password, and generating a JWT token.
 ​ *
 ​ * @param {Object} req - The request object containing the user's email and password.
