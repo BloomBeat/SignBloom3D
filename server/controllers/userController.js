@@ -1,7 +1,17 @@
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-// import dotenv from "dotenv";
+
+​/**
+​ * Handles user login by verifying email and password, and generating a JWT token.
+​ *
+​ * @param {Object} req - The request object containing the user's email and password.
+​ * @param {string} req.body.email - The user's email.
+​ * @param {string} req.body.password - The user's password.
+​ * @param {Object} res - The response object to send back to the client.
+​ *
+​ * @returns {Object} - The response object with a token if successful, or an error message if unsuccessful.
+​ */
 
 export const userLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -85,21 +95,23 @@ export const userRegister = async (req, res) => {
       hearing_level,
       interpreter_group,
       curriculum,
-      curr_time,
+      curr_time: new Date(curr_time),
       institution,
       picture_profile,
       role,
+      created_at: new Date(),
+      updated_at: new Date(),
     });
+
     console.log("New user to be saved:", newUser);
     // Save user to database
     await newUser.save();
-
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error("Validation Error:", error.errors);
     res
       .status(500)
       .json({ message: "Error registering user", error: error.message });
-    console.log("error is here:", error.message);
+    console.log("error is here:", error);
   }
 };
