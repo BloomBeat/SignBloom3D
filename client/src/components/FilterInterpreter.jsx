@@ -3,11 +3,9 @@ import {useState} from React
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
 
 const interpreters= [
-  {id: 1 ,name: 'ล่ามโทรทัศน์'},
-  {id: 2 ,name: 'ล่ามชุมชน'},
-  {id: 3 ,name: 'คนหูดี'},
-  {id: 4 ,name: 'คนหูตึง'},
-  {id: 5 ,name: 'คนหูหนวก'},
+  {id: 1 ,name: 'ล่ามหูดี'},
+  {id: 2 ,name: 'ล่ามหูหนวก'},
+  {id: 3 ,name: 'ล่ามหูตึง'},
 ]
 
 function FilterInterpreter(){
