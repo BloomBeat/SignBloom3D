@@ -1,17 +1,3 @@
-//import helmet from "helmet"; //add for resolve Content Security Policy (CSP) issue.
-
-// const app = express();
-
-// app.use(
-//   helmet({
-//     contentSecurityPolicy: {
-//       directives: {
-//         "script-src": ["'self'", "'unsafe-inline'"],
-//       },
-//     },
-//   })
-// );
-
 const validateLogin = (req, res, next) => {
   //now still not pass validate
   const { email, password } = req.body; //check that used username/email !!!
