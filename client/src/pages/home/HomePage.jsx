@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import Navbaruser from '../../components/Navbaruser';
 import SearchBar from '../../components/Searchbar';
 import CustomBtn from '../../components/Botton';
 import api from '../../hooks/api';
