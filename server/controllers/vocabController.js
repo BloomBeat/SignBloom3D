@@ -24,7 +24,6 @@ export const vocabSuggestions = async (req, res) => {
     }
 
     const categories = await Category.find(query);
-
     let vocabularySuggestions = [];
 
     categories.forEach((category) => {
@@ -45,7 +44,11 @@ export const vocabSuggestions = async (req, res) => {
         }
       });
     });
-
+    
+    // TODO: WUT in query database can use $limit
+    // TODO: do pagination limit skip
+    // ref: https://stackoverflow.com/a/5540562
+    // ref: https://stackoverflow.com/a/14822142
     const maxSuggestions = 10;
     vocabularySuggestions = vocabularySuggestions.slice(0, maxSuggestions);
     res.status(200).json({ vocabularySuggestions });
