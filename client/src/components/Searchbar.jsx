@@ -2,32 +2,12 @@ import { useState, useEffect, Fragment } from 'react';
 import { Combobox } from '@headlessui/react';
 import { CheckIcon } from '@heroicons/react/20/solid';
 
-function SearchBar() {
-  const [searchResults, setSearchResults] = useState([]); // hold search results
-  const [selectedSearch, setSelectedSearch] = useState(null); // hold the selected item
-  const [query, setQuery] = useState(''); // hold the search query
-
-  // Fetch data from backend
-  useEffect(() => {
-    const fetchSearchResults = async () => {
-      try {
-        const response = await fetch('/api/search'); // Replace with your API endpoint
-        const data = await response.json();
-        setSearchResults(data);
-      } catch (error) {
-        console.error('Error fetching search results:', error);
-      }
-    };
-    fetchSearchResults();
-  }, []); // Empty dependency array ensures this runs only once
-
-  // Filter the search results based on the query
-  const filteredSearchResults =
-    query === ''
-      ? searchResults
-      : searchResults.filter((item) =>
-         item.name.toLowerCase().includes(query.toLowerCase())
-      );
+function SearchBar({
+  selectedSearch,
+  setSelectedSearch,
+  setQuery,
+  filteredSearchResults,
+}) {
 
   return (
     <Combobox value={selectedSearch} onChange={setSelectedSearch}>
