@@ -6,5 +6,5 @@ function CustomBtn({label}) {
     );
   }
   
-  export default Btn;
+  export default CustomBtn;
 // applied this when want to be used <CustomBtn  label="ดาวน์โหลด"/>
