@@ -2,69 +2,56 @@ import Category from "../models/category.js";
 
 export const vocabSuggestions = async (req, res) => {
   try {
-    const {
-      find,
-      category,
-      parts_of_speech,
-      author,
-      page = 1,
-      limit = 20,
-      sortOrder = "desc",
-      sortAlphabet = false,
-    } = req.query;
+    const { find, category, parts_of_speech, author } = req.query;
+    const regex = new RegExp(`^${find}`, "i");
 
-    const regex = find ? new RegExp(`^${find}`, "i") : null;
-    const skip = (page - 1) * limit;
+    // Build the query object
+    let query = {
+      $or: [
+        { category: { $regex: regex } }, // Match category names with the search query
+        { "vocabularies.name": { $regex: regex } }, // Match vocabulary names with the search query
+      ],
+    };
 
-    const matchCriteria = {};
-    if (category) matchCriteria.category = category;
-    if (regex) matchCriteria["vocabularies.name"] = { $regex: regex };
-    if (parts_of_speech)
-      matchCriteria["vocabularies.parts_of_speech"] = parts_of_speech;
-    if (author) matchCriteria["vocabularies.author"] = author;
+    if (category) {
+      query.category = category;
+    }
+    if (parts_of_speech) {
+      query["vocabularies.parts_of_speech"] = parts_of_speech;
+    }
+    if (author) {
+      query["vocabularies.author"] = author;
+    }
 
-    const pipeline = [
-      { $unwind: "$vocabularies" },
+    const categories = await Category.find(query);
+    let vocabularySuggestions = [];
 
-      { $sort: { "vocabularies.updated_at": sortOrder === "asc" ? 1 : -1 } },
-
-      { $match: matchCriteria },
-
-      ...(sortAlphabet ? [{ $sort: { "vocabularies.name": 1 } }] : []),
-
-      { $skip: skip },
-      { $limit: Number(limit) },
-
-      {
-        $project: {
-          // _id: 0, // Uncomment this line if _id needs to be excluded
-          name: "$vocabularies.name",
-          category: "$category",
-          parts_of_speech: "$vocabularies.parts_of_speech",
-          description: "$vocabularies.description",
-          author: "$vocabularies.author",
-          updated_at: "$vocabularies.updated_at",
-        },
-      },
-    ];
-
-    const totalResultsPipeline = [
-      { $unwind: "$vocabularies" },
-      { $match: matchCriteria },
-      { $count: "total" },
-    ];
-
-    const totalResults = await Category.aggregate(totalResultsPipeline);
-    const totalCount = totalResults.length > 0 ? totalResults[0].total : 0;
-
-    const vocabularySuggestions = await Category.aggregate(pipeline).exec();
-
-    res.status(200).json({
-      page: Number(page),
-      limit: Number(limit),
-      totalResults: totalCount,
-      suggestions: vocabularySuggestions,
+    categories.forEach((category) => {
+      category.vocabularies.forEach((vocab) => {
+        if (
+          regex.test(vocab.name) &&
+          (!parts_of_speech || vocab.parts_of_speech === parts_of_speech) &&
+          (!author || vocab.author === author)
+        ) {
+          vocabularySuggestions.push({
+            name: vocab.name,
+            category: category.category,
+            parts_of_speech: vocab.parts_of_speech,
+            description: vocab.description,
+            author: vocab.author,
+            updated_at: vocab.updated_at.toLocaleDateString(),
+          });
+        }
+      });
     });
+    
+    // TODO: WUT in query database can use $limit
+    // TODO: do pagination limit skip
+    // ref: https://stackoverflow.com/a/5540562
+    // ref: https://stackoverflow.com/a/14822142
+    const maxSuggestions = 10;
+    vocabularySuggestions = vocabularySuggestions.slice(0, maxSuggestions);
+    res.status(200).json({ vocabularySuggestions });
   } catch (err) {
     console.error("Failed to fetch suggestions:", err);
     res.status(500).json({ error: "Failed to fetch suggestions" });
