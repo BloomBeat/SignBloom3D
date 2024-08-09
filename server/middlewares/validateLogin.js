@@ -1,3 +1,15 @@
+/**
+ * Validates the login credentials provided by the user.
+ *
+ * @param {*Object} req - The request object containing the user's email and password.
+ * @param {*Object} res - The response object to send back to the client.
+ * @param {*Function} next - The next middleware function in the request-response cycle.
+ *
+ * @returns {void}
+ *
+ * @throws Will send a response with status 400 and an error message if any validation fails.
+ * validaateLogin(req, res, next);
+ */
 const validateLogin = (req, res, next) => {
   //now still not pass validate
   const { email, password } = req.body; //check that used username/email !!!
