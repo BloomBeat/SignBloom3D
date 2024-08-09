@@ -24,7 +24,6 @@ export const vocabSuggestions = async (req, res) => {
     }
 
     const categories = await Category.find(query);
-
     let vocabularySuggestions = [];
 
     categories.forEach((category) => {
@@ -45,18 +44,14 @@ export const vocabSuggestions = async (req, res) => {
         }
       });
     });
-
-    const totalResults = await Category.aggregate(totalResultsPipeline);
-    const totalCount = totalResults.length > 0 ? totalResults[0].total : 0;
-
-    const vocabularySuggestions = await Category.aggregate(pipeline).exec();
-
-    res.status(200).json({
-      page: Number(page),
-      limit: Number(limit),
-      totalResults: totalCount,
-      suggestions: vocabularySuggestions,
-    });
+    
+    // TODO: WUT in query database can use $limit
+    // TODO: do pagination limit skip
+    // ref: https://stackoverflow.com/a/5540562
+    // ref: https://stackoverflow.com/a/14822142
+    const maxSuggestions = 10;
+    vocabularySuggestions = vocabularySuggestions.slice(0, maxSuggestions);
+    res.status(200).json({ vocabularySuggestions });
   } catch (err) {
     console.error("Failed to fetch suggestions:", err);
     res.status(500).json({ error: "Failed to fetch suggestions" });
