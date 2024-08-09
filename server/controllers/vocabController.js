@@ -70,3 +70,13 @@ export const vocabSuggestions = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch suggestions" });
   }
 };
+
+export const getCategory = async (req, res) => {
+  try {
+    const categories = await Category.find({}, { category: 1 });
+    res.status(200).json(categories);
+  } catch (err) {
+    console.error("Failed to fetch categories:", err);
+    res.status(500).json({ error: "Failed to fetch categories" });
+  }
+};
