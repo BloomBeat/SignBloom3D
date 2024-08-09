@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-// import Navbaruser from '../../components/Navbaruser';
 import SearchBar from '../../components/Searchbar';
 import CustomBtn from '../../components/Botton';
 import api from '../../hooks/api';
 
-// client/src/components/Navbaruser.jsx
 export const Home = () => {
   const [message, setMessage] = useState("");
   const [searchResults, setSearchResults] = useState([]); // hold search results
