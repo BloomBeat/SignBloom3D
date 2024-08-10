@@ -55,7 +55,7 @@ export const vocabSuggestions = async (req, res) => {
   }
 };
 
-export const getCategory = async (req, res) => {
+export const getCategories = async (req, res) => {
   try {
     const categories = await Category.find({}, { category: 1 });
     res.status(200).json(categories);
