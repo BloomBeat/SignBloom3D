@@ -9,7 +9,7 @@ export const vocabSuggestions = async (req, res) => {
     let query = {
       $or: [
         { category: { $regex: regex } }, // Match category names with the search query
-        { "vocabularies.name": { $regex: regex } }, // Match vocabulary names with the search query
+        { "vocabularies.name": { $regex: regex } },
       ],
     };
 
