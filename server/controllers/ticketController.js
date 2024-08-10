@@ -1,15 +1,77 @@
 import Ticket from "../models/ticket.js";
 
+// Get Tickets with dynamic filtering
 export const getTicket = async (req, res) => {
   try {
-    const tickets = await Ticket.find();
-    res.status(200).json(tickets);
+    const {
+      find,
+      status,
+      period,
+      page = 1,
+      limit = 20,
+      sortOrder = "desc",
+    } = req.query;
+
+    // Calculate pagination
+    const skip = (page - 1) * limit;
+
+    // Build the match criteria dynamically
+    const matchCriteria = {};
+
+    if (find) {
+      const regex = new RegExp(find, "i"); // Create a case-insensitive regex for the find parameter
+      matchCriteria.title = { $regex: regex }; // Match the title field
+    }
+
+    if (status) {
+      matchCriteria.status = status; // Filter by status
+    }
+
+    if (period) {
+      const [startYear, startMonth, endYear, endMonth] = period.split(",");
+
+      // Construct the start and end dates
+      const startDate = new Date(startYear, startMonth - 1); // Month is 0-based
+      const endDate = new Date(endYear, endMonth, 0); // Last day of the end month
+
+      matchCriteria.created_at = {
+        $gte: startDate,
+        $lte: endDate,
+      };
+    }
+
+    const pipeline = [
+      { $match: matchCriteria }, // Match criteria
+      { $sort: { created_at: sortOrder === "asc" ? 1 : -1 } }, // Sort by created_at
+      { $skip: skip }, // Skip for pagination
+      { $limit: Number(limit) }, // Limit results for pagination
+    ];
+
+    const totalResultsPipeline = [
+      { $match: matchCriteria },
+      { $count: "total" }, // Count total results
+    ];
+
+    // Execute aggregation pipelines
+    const totalResults = await Ticket.aggregate(totalResultsPipeline);
+    const totalCount = totalResults.length > 0 ? totalResults[0].total : 0;
+
+    const tickets = await Ticket.aggregate(pipeline).exec();
+
+    // Respond with paginated, sorted, and filtered results
+    res.status(200).json({
+      page: Number(page),
+      limit: Number(limit),
+      totalResults: totalCount,
+      tickets,
+    });
   } catch (err) {
     console.error("Failed to fetch tickets:", err);
     res.status(500).json({ error: "Failed to fetch tickets" });
   }
 };
 
+// Create a new Ticket
 export const createTicket = async (req, res) => {
   try {
     const { title, vocabulary_id, user_id, description } = req.body;
@@ -26,34 +88,24 @@ export const createTicket = async (req, res) => {
       title,
       description,
       status: "open",
-      admin_comments: "", // Default value
+      admin_comments: "",
     });
 
     await ticket.save();
 
-    // Respond with the created ticket
-    res.status(201).json({
-      id: ticket._id,
-      vocabulary_id: ticket.vocabulary_id,
-      user_id: ticket.user_id,
-      title: ticket.title,
-      description: ticket.description,
-      status: ticket.status,
-      admin_comments: ticket.admin_comments,
-      created_at: ticket.created_at,
-      updated_at: ticket.updated_at,
-    });
+    res.status(201).json(ticket);
   } catch (err) {
     console.error("Failed to create ticket:", err);
     res.status(500).json({ error: "Failed to create ticket" });
   }
 };
 
+// Update an existing Ticket
 export const updateTicket = async (req, res) => {
   try {
     const { id } = req.query;
-    console.log(`Updating ticket ${id}`);
     const { description, status, admin_comments } = req.body;
+
     // Validate input fields if necessary
     if (!description && !status && !admin_comments) {
       return res.status(400).json({ message: "No fields to update" });
@@ -67,8 +119,8 @@ export const updateTicket = async (req, res) => {
 
     // Perform the update
     const updatedTicket = await Ticket.findByIdAndUpdate(id, updateFields, {
-      new: true, // Return the updated document
-      runValidators: true, // Run schema validations
+      new: true,
+      runValidators: true,
     });
 
     if (!updatedTicket) {
@@ -82,15 +134,18 @@ export const updateTicket = async (req, res) => {
   }
 };
 
+// Delete a Ticket
 export const deleteTicket = async (req, res) => {
   try {
     const { id } = req.query;
-    // console.log(id);
+
     const deletedTicket = await Ticket.findByIdAndDelete(id);
+
     if (!deletedTicket) {
       return res.status(404).json({ message: "Ticket not found" });
     }
-    res.status(200).json({ message: `deleted ticket ${id} successfully` });
+
+    res.status(200).json({ message: `Deleted ticket ${id} successfully` });
   } catch (err) {
     console.error("Failed to delete ticket:", err);
     res.status(500).json({ error: "Failed to delete ticket" });
