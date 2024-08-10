@@ -12,19 +12,16 @@ export const getTicket = async (req, res) => {
       sortOrder = "desc",
     } = req.query;
 
-    // Calculate pagination
     const skip = (page - 1) * limit;
-
-    // Build the match criteria dynamically
     const matchCriteria = {};
 
     if (find) {
-      const regex = new RegExp(find, "i"); // Create a case-insensitive regex for the find parameter
-      matchCriteria.title = { $regex: regex }; // Match the title field
+      const regex = new RegExp(find, "i");
+      matchCriteria.title = { $regex: regex };
     }
 
     if (status) {
-      matchCriteria.status = status; // Filter by status
+      matchCriteria.status = status;
     }
 
     if (period) {
@@ -41,15 +38,15 @@ export const getTicket = async (req, res) => {
     }
 
     const pipeline = [
-      { $match: matchCriteria }, // Match criteria
-      { $sort: { created_at: sortOrder === "asc" ? 1 : -1 } }, // Sort by created_at
-      { $skip: skip }, // Skip for pagination
-      { $limit: Number(limit) }, // Limit results for pagination
+      { $match: matchCriteria },
+      { $sort: { created_at: sortOrder === "asc" ? 1 : -1 } },
+      { $skip: skip },
+      { $limit: Number(limit) },
     ];
 
     const totalResultsPipeline = [
       { $match: matchCriteria },
-      { $count: "total" }, // Count total results
+      { $count: "total" },
     ];
 
     // Execute aggregation pipelines
@@ -58,7 +55,6 @@ export const getTicket = async (req, res) => {
 
     const tickets = await Ticket.aggregate(pipeline).exec();
 
-    // Respond with paginated, sorted, and filtered results
     res.status(200).json({
       page: Number(page),
       limit: Number(limit),
@@ -71,17 +67,14 @@ export const getTicket = async (req, res) => {
   }
 };
 
-// Create a new Ticket
 export const createTicket = async (req, res) => {
   try {
     const { title, vocabulary_id, user_id, description } = req.body;
 
-    // Validate input
     if (!title || !vocabulary_id || !user_id || !description) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Create a new ticket
     const ticket = new Ticket({
       vocabulary_id,
       user_id,
@@ -99,25 +92,17 @@ export const createTicket = async (req, res) => {
     res.status(500).json({ error: "Failed to create ticket" });
   }
 };
-
-// Update an existing Ticket
 export const updateTicket = async (req, res) => {
   try {
     const { id } = req.query;
     const { description, status, admin_comments } = req.body;
-
-    // Validate input fields if necessary
     if (!description && !status && !admin_comments) {
       return res.status(400).json({ message: "No fields to update" });
     }
-
-    // Prepare the update object
     const updateFields = {};
     if (description) updateFields.description = description;
     if (status) updateFields.status = status;
     if (admin_comments) updateFields.admin_comments = admin_comments;
-
-    // Perform the update
     const updatedTicket = await Ticket.findByIdAndUpdate(id, updateFields, {
       new: true,
       runValidators: true,
@@ -134,7 +119,6 @@ export const updateTicket = async (req, res) => {
   }
 };
 
-// Delete a Ticket
 export const deleteTicket = async (req, res) => {
   try {
     const { id } = req.query;
