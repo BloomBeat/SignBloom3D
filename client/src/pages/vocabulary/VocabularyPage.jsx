@@ -1,8 +1,17 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Searchbar from "../../components/Searchbar";
-import Filterinterpreter from "../../components/FilterWordtype";
+import FilterCategory from "../../components/FilterCategory";
+import FilterInterpreter from "../../components/FilterInterpreter";
+import FilterWordtype from "../../components/FilterWordtype";
 import { FunnelIcon, ArrowsUpDownIcon } from "@heroicons/react/20/solid";
 import { Menu, Transition } from '@headlessui/react';
+import axios from 'axios';
+
+const convertThaiDateToGregorian = (thaiDate) => {
+    const [day, month, yearBuddhist] = thaiDate.split('/').map(Number);
+    const yearGregorian = yearBuddhist - 543;
+    return new Date(yearGregorian, month - 1, day);
+};
 
 function MyDropdown({ sorting }) {
     return (
@@ -46,53 +55,54 @@ function MyDropdown({ sorting }) {
     );
 }
 
-const TestData = [
-    { d1: "กกหมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "กหมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "จหมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "คหมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "กกหมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "ๅหมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "/หมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "หมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "หมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "หมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "กกหมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "หมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "หมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "หมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-    { d1: "หมูปิ้ง", d2: "อาหารคาว", d3: "คำนาม", d4: "หมูเสียบไม้เเล้วนำไปย่าง", d5: "ล่ามโทรทัศน์", d6: "2-7-2024" },
-]
-
 export const Vocabulary = () => {
-    const [data, setData] = useState(TestData);
+    const [searchResults, setSearchResults] = useState([]);
     const [activeRowIndex, setActiveRowIndex] = useState(null);
-    
-    // For Time sort -> yang mai dai tum 
-    const [orderT, setOrderT] = useState("ASC");
+    const [type, setType] = useState("ASC");
 
     const handleRowClick = (index) => {
         setActiveRowIndex(index);
     }
 
     const sorting = (order) => {
-        if (order === 'ASC') {
-            const sorted = [...data].sort((a, b) =>
-                a.d1.localeCompare(b.d1, 'th')
-            );
-            setData(sorted);
-        } else if (order === 'DSC') {
-            const sorted = [...data].sort((a, b) =>
-                b.d1.localeCompare(a.d1, 'th')
-            );
-            setData(sorted);
-        }
+        const sorted = [...searchResults].sort((a, b) =>
+            order === 'ASC'
+                ? a.name.localeCompare(b.name, 'th')
+                : b.name.localeCompare(a.name, 'th')
+        );
+        setSearchResults(sorted);
     }
 
-    // Yang mai dai tum -> 
-    const sortTime = () => {
-            
-    }
+    const sortingTime = () => {
+        const sorted = [...searchResults].sort((a, b) =>
+            type === 'ASC'
+                ? convertThaiDateToGregorian(a.updated_at) - convertThaiDateToGregorian(b.updated_at)
+                : convertThaiDateToGregorian(b.updated_at) - convertThaiDateToGregorian(a.updated_at)
+        );
+        setSearchResults(sorted);
+        setType(prevType => prevType === 'ASC' ? 'DSC' : 'ASC');
+    };
+
+    useEffect(() => {
+        const fetchSearchResults = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/api/vocab', {
+                    params: {
+                        find: '',
+                        category: '',
+                        parts_of_speech: ''
+                    }
+                });
+
+                const results = Array.isArray(response.data.vocabularySuggestions) ? response.data.vocabularySuggestions : [];
+                setSearchResults(results);
+            } catch (error) {
+                console.error('Error fetching search results:', error);
+            }
+        };
+
+        fetchSearchResults();
+    }, []);
 
     return (
         <div className="flex justify-center items-center mt-10 flex-col">
@@ -102,14 +112,14 @@ export const Vocabulary = () => {
 
             <div className="flex flex-col justify-center items-center mt-14 lg:w-[57rem] w-3/4">
                 <Searchbar />
-                <div className="flex flex-row justify-between w-full">
-                    <Filterinterpreter />
-                    <Filterinterpreter />
-                    <Filterinterpreter />
+                <div className="flex flex-row justify-between w-full mt-4">
+                    <FilterWordtype />
+                    <FilterWordtype />
+                    <FilterWordtype />
                 </div>
             </div>
 
-            <table className="table-auto w-10/12 my-[4.5rem]">
+            <table className="w-10/12 my-[4rem] table-fixed">
                 <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left">
                     <tr>
                         <th className="flex flex-row justify-between py-3 px-4 relative cursor-pointer">
@@ -119,24 +129,24 @@ export const Vocabulary = () => {
                         <th className="py-3 px-4">ชนิดของคำ</th>
                         <th className="py-3 px-4">คำอธิบาย</th>
                         <th className="py-3 px-4">จัดโดย</th>
-                        <th className="flex flex-row justify-between py-3 px-4 cursor-pointer">
+                        <th onClick={sortingTime} className="flex flex-row justify-between py-3 px-4 cursor-pointer">
                             วันที่ <ArrowsUpDownIcon className='size-4 text-blue-500' />
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data.slice(0, 20).map((Test, index) => (
+                    {searchResults.slice(0, 20).map((data, index) => (
                         <tr
                             key={index}
                             onClick={() => handleRowClick(index)}
                             className={`text-sm text-gray-600 border-b-2 cursor-pointer ${activeRowIndex === index ? 'bg-secondary-content' : 'hover:bg-gray-200'}`}
                         >
-                            <td className="py-5 px-4">{Test.d1}</td>
-                            <td className="py-5 px-4">{Test.d5}</td>
-                            <td className="py-5 px-4">{Test.d3}</td>
-                            <td className="py-5 px-4">{Test.d4}</td>
-                            <td className="py-5 px-4">{Test.d5}</td>
-                            <td className="py-5 px-4">{Test.d6}</td>
+                            <td className="py-5 px-4 truncate">{data.name}</td>
+                            <td className="py-5 px-4 truncate">{data.category}</td>
+                            <td className="py-5 px-4 truncate">{data.parts_of_speech}</td>
+                            <td className="py-5 px-4 truncate">{data.description}</td>
+                            <td className="py-5 px-4 truncate">{data.author}</td>
+                            <td className="py-5 px-4 truncate">{data.updated_at}</td>
                         </tr>
                     ))}
                 </tbody>

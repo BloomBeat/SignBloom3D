@@ -1,13 +1,11 @@
-import React from 'react'
-import {useState} from React
-import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
+import { React , useState } from 'react'
+import { Combobox } from '@headlessui/react'
+import { CheckIcon } from '@heroicons/react/20/solid'
 
 const interpreters= [
-  {id: 1 ,name: 'ล่ามโทรทัศน์'},
-  {id: 2 ,name: 'ล่ามชุมชน'},
-  {id: 3 ,name: 'คนหูดี'},
-  {id: 4 ,name: 'คนหูตึง'},
-  {id: 5 ,name: 'คนหูหนวก'},
+  {id: 1 ,name: 'ล่ามหูดี'},
+  {id: 2 ,name: 'ล่ามหูหนวก/หูหนวก'},
+  {id: 3 ,name: 'ล่ามหูหนวก/หูตึง'},
 ]
 
 function FilterInterpreter(){

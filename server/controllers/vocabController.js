@@ -48,6 +48,7 @@ export const vocabSuggestions = async (req, res) => {
 
     const maxSuggestions = 10;
     vocabularySuggestions = vocabularySuggestions.slice(0, maxSuggestions);
+    res.header("Access-Control-Allow-Origin", "*");
     res.status(200).json({ vocabularySuggestions });
   } catch (err) {
     console.error("Failed to fetch suggestions:", err);

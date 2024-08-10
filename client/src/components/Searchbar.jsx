@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Combobox } from '@headlessui/react';
 import { CheckIcon } from '@heroicons/react/20/solid';
+import axios from 'axios';
 
 function SearchBar() {
   const [searchResults, setSearchResults] = useState([]); // hold search results
@@ -11,22 +12,28 @@ function SearchBar() {
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
-        const response = await fetch('/api/search'); // Replace with your API endpoint
-        const data = await response.json();
-        setSearchResults(data);
+        const response = await axios.get('http://localhost:3000/api/vocab', {
+          params: {
+            find: 'ตา',
+            category: 'ร่างกายภายนอก',
+            parts_of_speech: 'คำนาม'
+          }
+        });
+        setSearchResults(response.data);
       } catch (error) {
         console.error('Error fetching search results:', error);
       }
     };
+
     fetchSearchResults();
-  }, []); // Empty dependency array ensures this runs only once
+  }, []);
 
   // Filter the search results based on the query
   const filteredSearchResults =
     query === ''
       ? searchResults
       : searchResults.filter((item) =>
-         item.name.toLowerCase().includes(query.toLowerCase())
+        item.name.toLowerCase().includes(query.toLowerCase())
       );
 
   return (
@@ -44,9 +51,8 @@ function SearchBar() {
               <Combobox.Option key={item.id} value={item} as={Fragment}>
                 {({ active, selected }) => (
                   <li
-                    className={`cursor-pointer select-none relative py-2 pl-4 pr-4 ${
-                      active ? 'bg-blue-500 text-white' : 'bg-white text-black'
-                    }`}
+                    className={`cursor-pointer select-none relative py-2 pl-4 pr-4 ${active ? 'bg-blue-500 text-white' : 'bg-white text-black'
+                      }`}
                   >
                     {selected && (
                       <CheckIcon className="w-5 h-5 inline-block mr-2" />
