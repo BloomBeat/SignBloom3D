@@ -58,6 +58,14 @@ export const vocabSuggestions = async (req, res) => {
   }
 };
 
+export const getCategories = async (req, res) => {
+  try {
+    const categories = await Category.find({}, { category: 1 });
+    res.status(200).json(categories);
+  } catch (err) {
+    console.error("Failed to fetch categories:", err);
+    res.status(500).json({ error: "Failed to fetch categories" });
+
 export const displayVocab = async (req, res) => {
   try {
     const { id } = req.params;
@@ -89,5 +97,6 @@ export const displayVocab = async (req, res) => {
   } catch (err) {
     console.error("Failed to fetch word:", err);
     res.status(500).json({ error: "Failed to fetch word" });
+
   }
 };
