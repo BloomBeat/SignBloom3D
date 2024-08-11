@@ -4,8 +4,7 @@ import SearchBar from '../../components/Searchbar';
 import CustomBtn from '../../components/Botton';
 import api from '../../hooks/api';
 
-// client/src/components/Navbaruser.jsx
-export const Home = () => {
+export const HomePage = () => {
   const [message, setMessage] = useState("");
   const [searchResults, setSearchResults] = useState([]); // hold search results
   const [selectedSearch, setSelectedSearch] = useState(null); // hold the selected item
