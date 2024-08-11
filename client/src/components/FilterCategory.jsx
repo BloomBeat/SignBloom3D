@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
 
@@ -7,7 +6,7 @@ const categories = [
   //fetch from backend
 ]
 
-function MyCombobox() {
+function FilterCategory() {
   const [selectedCategory, setSelectedCategory] = useState(categories[0])
   const [query, setQuery] = useState('')
 
@@ -31,3 +30,5 @@ function MyCombobox() {
     </Combobox>
   )
 }
+
+export default FilterCategory;

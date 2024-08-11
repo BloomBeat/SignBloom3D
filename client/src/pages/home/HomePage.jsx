@@ -1,12 +1,12 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import Navbaruser from "../../components/Navbaruser";
 
-export const Home = () => {
+export const HomePage = () => {
   const [message, setMessage] = useState("");
 
   return (
     <div>
+   
      
     </div>
   )

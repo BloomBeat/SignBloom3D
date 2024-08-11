@@ -1,51 +1,74 @@
-import React from 'react'
-import {useState} from React
-import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
+import { Fragment, useState } from 'react'
+import { Listbox, Transition } from '@headlessui/react'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-const time = [
-  {id: 1 ,name: 'มกราคม'},
-  {id: 2 ,name: 'กุมภาพันธ์'},
-  {id: 3 ,name: 'มีนาคม'},
-  {id: 4 ,name: 'เมษายน'},
-  {id: 5 ,name: 'พฤษภาคม'},
-  {id: 6 ,name: 'มิถุนายน'},
-  {id: 7 ,name: 'กรกฎาคม'},
-  {id: 8 ,name: 'สิงหาคม'},
-  {id: 9 ,name: 'กันยายน'},
-  {id: 10 ,name: 'ตุลาคม'},
-  {id: 11 ,name: 'พฤศจิกายน'},
-  {id: 12 ,name: 'ธันวาคม'},
+const statuses = [
+  {id: 1, name: 'ได้รับคำร้อง'},
+  {id: 2, name: 'ตรวจสอบคำร้อง'},
+  {id: 3, name: 'กำลังแก้ไข'},
+  {id: 4, name: 'แก้ไขเสร็จสิ้น'},
 ]
 
-function FilterTime(){
-  const [SelectedTime, setSelectedTime] = useState(time[0])
-  const [query, setQuery] = useState('')  
-  const Filtertime =
-    query == ''
-      ? time
-      : time.filter((time) =>{
-          return time.name.toLowerCase().includes(query.toLowerCase())
-      })
+export default function FilterStatus() {
+  const [selected, setSelected] = useState(statuses[0])
 
   return (
-    <Combobox value={SelectedTime} onChange={setSelectedTime} onClose={() => setQuery('')}>
-      <ComboboxInput
-       aria-label='Assignee'
-       displayValue={(time)=> time?.name}
-       onChange={(event) => setQuery(event.target.value)}
-       />
-    <ComboboxOptions anchor="bottom" className="border empty:invisible" >
-      {filteredtime.map((time)=>(
-        <ComboboxOption key={time.id} value={time} className="group flex gap-2 bg-white data-[focus]:bg-blue-100"> 
-          <CheckIcon className="invisible size-5 group-data-[selected]:visible"/>
-          {time.name}
-        </ComboboxOption>
-      ))}
-    </ComboboxOptions>
-
-    </Combobox>
+    <div className="w-full">
+      <Listbox value={selected} onChange={setSelected}>
+        <div className="relative">
+          <Listbox.Button className="h-14 w-full px-3 rounded border border-black/25 text-left relative">
+            <span className="block truncate text-black/90 text-base font-normal font-['Roboto'] leading-normal tracking-tight">
+              {selected.name}
+            </span>
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+              <ChevronUpDownIcon
+                className="h-5 w-5 text-gray-400"
+                aria-hidden="true"
+              />
+            </span>
+          </Listbox.Button>
+          <Listbox.Label className="absolute -top-2 left-3 px-1 bg-white text-black/60 text-xs font-normal font-['Roboto'] leading-3 tracking-tight">
+            สถานะ
+          </Listbox.Label>
+          <Transition
+            as={Fragment}
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+              {statuses.map((status) => (
+                <Listbox.Option
+                  key={status.id}
+                  className={({ active }) =>
+                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                      active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
+                    }`
+                  }
+                  value={status}
+                >
+                  {({ selected }) => (
+                    <>
+                      <span
+                        className={`block truncate ${
+                          selected ? 'font-medium' : 'font-normal'
+                        }`}
+                      >
+                        {status.name}
+                      </span>
+                      {selected ? (
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                      ) : null}
+                    </>
+                  )}
+                </Listbox.Option>
+              ))}
+            </Listbox.Options>
+          </Transition>
+        </div>
+      </Listbox>
+    </div>
   )
 }
-
-export default FilterTime;
-
