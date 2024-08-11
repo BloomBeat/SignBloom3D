@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
-import SearchBar from '../../components/Searchbar';
-import CustomBtn from '../../components/Botton';
-import api from '../../hooks/api';
 
-export const Home = () => {
+export const HomePage = () => {
   const [message, setMessage] = useState("");
   const [searchResults, setSearchResults] = useState([]); // hold search results
   const [selectedSearch, setSelectedSearch] = useState(null); // hold the selected item
@@ -32,25 +29,9 @@ export const Home = () => {
     );
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* <Navbaruser/> */}
-
-      <div className="flex-grow flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-10">
-          <img src="/SignBloom3DLogo.png" alt="Public Image" className="w-max h-max object-cover" />
-
-          {/* Flex container for SearchBar and Button */}
-          <div className="flex items-center space-x-4">
-            <SearchBar
-            selectedSearch={selectedSearch}
-            setSelectedSearch={setSelectedSearch}
-            setQuery={setQuery}
-            filteredSearchResults={filteredSearchResults}
-            />
-            <CustomBtn label="ค้นหา"/>
-          </div>
-        </div>
-      </div>
+    <div>
+   
+     
     </div>
   )
 };

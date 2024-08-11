@@ -1,13 +1,40 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Combobox } from '@headlessui/react';
 import { CheckIcon } from '@heroicons/react/20/solid';
+import axios from 'axios';
 
-function SearchBar({
-  selectedSearch,
-  setSelectedSearch,
-  setQuery,
-  filteredSearchResults,
-}) {
+function SearchBar() {
+  const [searchResults, setSearchResults] = useState([]); // hold search results
+  const [selectedSearch, setSelectedSearch] = useState(null); // hold the selected item
+  const [query, setQuery] = useState(''); // hold the search query
+
+  // Fetch data from backend
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/vocab', {
+          params: {
+            find: 'ตา',
+            category: 'ร่างกายภายนอก',
+            parts_of_speech: 'คำนาม'
+          }
+        });
+        setSearchResults(response.data);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      }
+    };
+  
+    fetchSearchResults();
+  }, []); 
+
+  // Filter the search results based on the query
+  const filteredSearchResults =
+    query === ''
+      ? searchResults
+      : searchResults.filter((item) =>
+         item.name.toLowerCase().includes(query.toLowerCase())
+      );
 
   return (
     <Combobox value={selectedSearch} onChange={setSelectedSearch}>
