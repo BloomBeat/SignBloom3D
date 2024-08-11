@@ -1,17 +1,11 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useRef } from 'react';
 import Searchbar from "../../components/Searchbar"; 
 import FilterCategory from "../../components/FilterCategory";
 import FilterInterpreter from "../../components/FilterInterpreter";
 import FilterWordtype from "../../components/FilterWordtype";
-import { FunnelIcon, ArrowsUpDownIcon } from "@heroicons/react/20/solid";
+import { FunnelIcon, ArrowsUpDownIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { Menu, Transition } from '@headlessui/react';
 import axios from 'axios';
-
-const convertThaiDateToGregorian = (thaiDate) => {
-    const [day, month, yearBuddhist] = thaiDate.split('/').map(Number);
-    const yearGregorian = yearBuddhist - 543;
-    return new Date(yearGregorian, month - 1, day);
-};
 
 function MyDropdown({ sorting }) {
     return (
@@ -59,6 +53,10 @@ export const Vocabulary = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [activeRowIndex, setActiveRowIndex] = useState(null);
     const [type, setType] = useState("ASC");
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const TableRef = useRef(null);
+    const firstRender = useRef(true);
 
     const handleRowClick = (index) => {
         setActiveRowIndex(index);
@@ -74,34 +72,72 @@ export const Vocabulary = () => {
     }
 
     const sortingTime = () => {
-        const sorted = [...searchResults].sort((a, b) =>
-            type === 'ASC'
-                ? convertThaiDateToGregorian(a.updated_at) - convertThaiDateToGregorian(b.updated_at)
-                : convertThaiDateToGregorian(b.updated_at) - convertThaiDateToGregorian(a.updated_at)
-        );
+        const sorted = [...searchResults].sort((a, b) => {
+            const dateA = new Date(a.updated_at);
+            const dateB = new Date(b.updated_at);
+    
+            return type === 'ASC' ? dateA - dateB : dateB - dateA;
+        });
+    
         setSearchResults(sorted);
         setType(prevType => prevType === 'ASC' ? 'DSC' : 'ASC');
     };
+    
+
+    const fetchSearchResults = async (pageNum) => {
+        if (loading) return; 
+        setLoading(true);
+        try {
+            const response = await axios.get('http://localhost:3000/api/vocab', {
+                params: {
+                    find: '',
+                    category: '',
+                    parts_of_speech: '',
+                    page: pageNum
+                }
+            });
+    
+            let results = Array.isArray(response.data.suggestions) ? response.data.suggestions : [];
+    
+            results = results.map(item => ({
+                ...item,
+                updated_at: new Date(item.updated_at).toISOString().split('T')[0]
+            }));
+    
+            setSearchResults(prevResults => [...prevResults, ...results]);
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+            return; 
+        }
+
+        fetchSearchResults(page);
+    }, [page]);
 
     useEffect(() => {
-        const fetchSearchResults = async () => {
-            try {
-                const response = await axios.get('http://localhost:3000/api/vocab', {
-                    params: {
-                        find: '',
-                        category: '',
-                        parts_of_speech: ''
-                    }
-                });
-
-                const results = Array.isArray(response.data.vocabularySuggestions) ? response.data.vocabularySuggestions : [];
-                setSearchResults(results);
-            } catch (error) {
-                console.error('Error fetching search results:', error);
+        const handleScroll = () => {
+            if (TableRef.current) {
+                const { scrollTop, scrollHeight, clientHeight } = TableRef.current;
+                if (scrollTop + clientHeight >= scrollHeight - 5) {
+                    setPage(prevPage => prevPage + 1);
+                }
             }
         };
 
-        fetchSearchResults();
+        const container = TableRef.current;
+        container.addEventListener('scroll', handleScroll);
+        return () => {
+            if (container) {
+                container.removeEventListener('scroll', handleScroll);
+            }
+        };
     }, []);
 
     return (
@@ -115,47 +151,48 @@ export const Vocabulary = () => {
                 <div className="flex flex-row justify-between w-full mt-4">
                     <FilterWordtype />
                     <FilterWordtype />
-                    <FilterWordtype />
+                    <FilterInterpreter />
                 </div>
             </div>
 
-            <div className="overflow-y-auto my-[4rem] w-10/12">
-            <table className="w-full table-fixed">
-                <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left">
-                    <tr>
-                        <th className="sticky top-0 bg-white">
-                            <div className='relative flex flex-row justify-between w-full'>
-                            <MyDropdown sorting={sorting} />
-                            </div>
-                        </th>
-                        <th className="py-3 px-4 sticky top-0 bg-white">หมวดหมู่</th>
-                        <th className="py-3 px-4 sticky top-0 bg-white">ชนิดของคำ</th>
-                        <th className="py-3 px-4 sticky top-0 bg-white">คำอธิบาย</th>
-                        <th className="py-3 px-4 sticky top-0 bg-white">จัดโดย</th>
-                        <th onClick={sortingTime} className="py-3 px-4 cursor-pointer sticky top-0 bg-white">
-                            <div className='flex flex-row justify-between w-full'>
-                            วันที่ <ArrowsUpDownIcon className='size-4 text-blue-500' />
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {searchResults.slice(0, 20).map((data, index) => (
-                        <tr
-                            key={index}
-                            onClick={() => handleRowClick(index)}
-                            className={`text-sm text-gray-600 border-b-2 cursor-pointer ${activeRowIndex === index ? 'bg-secondary-content' : 'hover:bg-gray-200'}`}
-                        >
-                            <td className="py-5 px-4 truncate">{data.name}</td>
-                            <td className="py-5 px-4 truncate">{data.category}</td>
-                            <td className="py-5 px-4 truncate">{data.parts_of_speech}</td>
-                            <td className="py-5 px-4 truncate">{data.description}</td>
-                            <td className="py-5 px-4 truncate">{data.author}</td>
-                            <td className="py-5 px-4 truncate">{data.updated_at}</td>
+            <div ref={TableRef} className="overflow-y-auto my-[4rem] w-10/12 flex flex-col items-center">
+                <table className="w-full table-fixed">
+                    <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left">
+                        <tr>
+                            <th className="sticky top-0 bg-white">
+                                <div className='relative flex flex-row justify-between w-full'>
+                                    <MyDropdown sorting={sorting} />
+                                </div>
+                            </th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">หมวดหมู่</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">ชนิดของคำ</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">คำอธิบาย</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">จัดโดย</th>
+                            <th onClick={sortingTime} className="py-3 px-4 cursor-pointer sticky top-0 bg-white">
+                                <div className='flex flex-row justify-between w-full'>
+                                    วันที่ <ArrowsUpDownIcon className='size-4 text-blue-500' />
+                                </div>
+                            </th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {searchResults.map((data, index) => (
+                            <tr
+                                key={index}
+                                onClick={() => handleRowClick(index)}
+                                className={`text-sm text-gray-600 border-b-2 cursor-pointer ${activeRowIndex === index ? 'bg-secondary-content' : 'hover:bg-gray-200'}`}
+                            >
+                                <td className="py-5 px-4 truncate">{data.name}</td>
+                                <td className="py-5 px-4 truncate">{data.category}</td>
+                                <td className="py-5 px-4 truncate">{data.parts_of_speech}</td>
+                                <td className="py-5 px-4 truncate">{data.description}</td>
+                                <td className="py-5 px-4 truncate">{data.author}</td>
+                                <td className="py-5 px-4 truncate">{data.updated_at}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                {loading && <p className="text-center py-4">Loading...</p>}
             </div>
         </div>
     );

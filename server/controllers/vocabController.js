@@ -58,3 +58,47 @@ export const vocabSuggestions = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch suggestions" });
   }
 };
+
+export const displayVocab = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the category containing the vocabulary with the specified ID
+    const category = await Category.findOne(
+      { "vocabularies._id": id },
+      { "vocabularies.$": 1 }
+    );
+
+    if (!category) {
+      return res.status(404).json({ error: "Word not found" });
+    }
+
+    // Extract the vocabulary item from the category
+    const vocab = category.vocabularies[0];
+
+    // Send the vocabulary item as the response
+    res.status(200).json({
+      _id: vocab._id,
+      name: vocab.name,
+      description: vocab.description,
+      parts_of_speech: vocab.parts_of_speech,
+      image: vocab.image,
+      author: vocab.author,
+      created_at: vocab.created_at,
+      updated_at: vocab.updated_at,
+    });
+  } catch (err) {
+    console.error("Failed to fetch word:", err);
+    res.status(500).json({ error: "Failed to fetch word" });
+  }
+};
+
+export const getCategories = async (req, res) => {
+  try {
+    const categories = await Category.find({}, { category: 1 });
+    res.status(200).json(categories);
+  } catch (err) {
+    console.error("Failed to fetch categories:", err);
+    res.status(500).json({ error: "Failed to fetch categories" });
+  }
+};
