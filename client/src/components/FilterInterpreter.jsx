@@ -4,8 +4,8 @@ import { CheckIcon } from '@heroicons/react/20/solid'
 
 const interpreters= [
   {id: 1 ,name: 'ล่ามหูดี'},
-  {id: 2 ,name: 'ล่ามหูหนวก/หูหนวก'},
-  {id: 3 ,name: 'ล่ามหูหนวก/หูตึง'},
+  {id: 2 ,name: 'ล่ามหูหนวก'},
+  {id: 3 ,name: 'ล่ามหูตึง'},
 ]
 
 function FilterInterpreter(){

@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
-import Searchbar from "../../components/Searchbar";
+import Searchbar from "../../components/Searchbar"; 
 import FilterCategory from "../../components/FilterCategory";
 import FilterInterpreter from "../../components/FilterInterpreter";
 import FilterWordtype from "../../components/FilterWordtype";
@@ -16,7 +16,7 @@ const convertThaiDateToGregorian = (thaiDate) => {
 function MyDropdown({ sorting }) {
     return (
         <Menu>
-            <Menu.Button className="flex flex-row h-full w-full justify-between">
+            <Menu.Button className="flex flex-row h-full w-full justify-between py-3 px-4">
                 คำ <FunnelIcon className="size-3 text-blue-500" />
             </Menu.Button>
             <Transition
@@ -105,8 +105,8 @@ export const Vocabulary = () => {
     }, []);
 
     return (
-        <div className="flex justify-center items-center mt-10 flex-col">
-            <div className="text-[5rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-base to-primary-content from-65%">
+        <div className="flex items-center flex-col h-[calc(100%-4rem)]">
+            <div className="xl:text-[5rem] text-[4rem]  font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-base to-primary-content from-65% mt-10">
                 SignBloom3D
             </div>
 
@@ -119,18 +119,23 @@ export const Vocabulary = () => {
                 </div>
             </div>
 
-            <table className="w-10/12 my-[4rem] table-fixed">
+            <div className="overflow-y-auto my-[4rem] w-10/12">
+            <table className="w-full table-fixed">
                 <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left">
                     <tr>
-                        <th className="flex flex-row justify-between py-3 px-4 relative cursor-pointer">
+                        <th className="sticky top-0 bg-white">
+                            <div className='relative flex flex-row justify-between w-full'>
                             <MyDropdown sorting={sorting} />
+                            </div>
                         </th>
-                        <th className="py-3 px-4">หมวดหมู่</th>
-                        <th className="py-3 px-4">ชนิดของคำ</th>
-                        <th className="py-3 px-4">คำอธิบาย</th>
-                        <th className="py-3 px-4">จัดโดย</th>
-                        <th onClick={sortingTime} className="flex flex-row justify-between py-3 px-4 cursor-pointer">
+                        <th className="py-3 px-4 sticky top-0 bg-white">หมวดหมู่</th>
+                        <th className="py-3 px-4 sticky top-0 bg-white">ชนิดของคำ</th>
+                        <th className="py-3 px-4 sticky top-0 bg-white">คำอธิบาย</th>
+                        <th className="py-3 px-4 sticky top-0 bg-white">จัดโดย</th>
+                        <th onClick={sortingTime} className="py-3 px-4 cursor-pointer sticky top-0 bg-white">
+                            <div className='flex flex-row justify-between w-full'>
                             วันที่ <ArrowsUpDownIcon className='size-4 text-blue-500' />
+                            </div>
                         </th>
                     </tr>
                 </thead>
@@ -151,6 +156,7 @@ export const Vocabulary = () => {
                     ))}
                 </tbody>
             </table>
+            </div>
         </div>
     );
 };

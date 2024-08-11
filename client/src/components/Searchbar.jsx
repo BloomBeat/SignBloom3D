@@ -1,51 +1,24 @@
-import { useState, useEffect, Fragment } from 'react';
+import { Fragment } from 'react';
 import { Combobox } from '@headlessui/react';
 import { CheckIcon } from '@heroicons/react/20/solid';
-import axios from 'axios';
 
-function SearchBar() {
-  const [searchResults, setSearchResults] = useState([]); // hold search results
-  const [selectedSearch, setSelectedSearch] = useState(null); // hold the selected item
-  const [query, setQuery] = useState(''); // hold the search query
-
-  // Fetch data from backend
-  useEffect(() => {
-    const fetchSearchResults = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/api/vocab', {
-          params: {
-            find: 'ตา',
-            category: 'ร่างกายภายนอก',
-            parts_of_speech: 'คำนาม'
-          }
-        });
-        setSearchResults(response.data);
-      } catch (error) {
-        console.error('Error fetching search results:', error);
-      }
-    };
-
-    fetchSearchResults();
-  }, []);
-
-  // Filter the search results based on the query
-  const filteredSearchResults =
-    query === ''
-      ? searchResults
-      : searchResults.filter((item) =>
-        item.name.toLowerCase().includes(query.toLowerCase())
-      );
+function SearchBar({
+  selectedSearch,
+  setSelectedSearch,
+  setQuery,
+  filteredSearchResults,
+}) {
 
   return (
     <Combobox value={selectedSearch} onChange={setSelectedSearch}>
       <div className="relative w-full mx-auto">
         <Combobox.Input
-          className="w-full py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 bg-white border-2 border-gray-200 rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
           onChange={(event) => setQuery(event.target.value)}
           displayValue={(item) => (item ? item.name : '')}
           placeholder="ค้นหา..."
         />
-        {filteredSearchResults.length > 0 && (
+        {/* {filteredSearchResults.length > 0 && (
           <Combobox.Options className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
             {filteredSearchResults.map((item) => (
               <Combobox.Option key={item.id} value={item} as={Fragment}>
@@ -63,7 +36,7 @@ function SearchBar() {
               </Combobox.Option>
             ))}
           </Combobox.Options>
-        )}
+        )} */}
       </div>
     </Combobox>
   );

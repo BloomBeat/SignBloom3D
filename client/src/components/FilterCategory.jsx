@@ -1,9 +1,10 @@
-import { React , useState } from 'react'
+
+import { useState } from 'react'
 import { Combobox } from '@headlessui/react'
 
 
 const categories = [
-    //fetch from backend
+  //fetch from backend
 ]
 
 function FilterCategory() {
