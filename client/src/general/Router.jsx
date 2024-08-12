@@ -11,9 +11,10 @@ import { Home } from "../pages/home/HomePage.jsx";
 import { NotFound } from "./NotFound.jsx";
 import { Layout } from "./Layout.jsx";
 import Navbaruser from "../components/Navbaruser.jsx";
+import { Vocabulary } from "../pages/vocabulary/VocabularyPage.jsx";
 
 export const Router = () => (
-
+  <>
   <Routes>
     <Route
       //
@@ -36,8 +37,15 @@ export const Router = () => (
         </Layout>
       }
     /> 
+    <Route
+      path="vocabulary" // localhost:5173/vocabulary
+      element={
+        <Layout>
+          <Navbaruser/>
+          <Vocabulary />
+        </Layout>
+      }
+    /> 
   </Routes>
+  </>
 );
-
-// <Route path="" element="">
-// path prop -> <Route path="/hello" element={<div>hello world!</div>}/> localhost:5173/hello

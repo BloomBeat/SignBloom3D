@@ -3,7 +3,7 @@ import React from "react";
 const Navbaruser = () => {
     return (
       <nav className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="px-12">
           <div className="flex justify-between h-16">
             <div className="flex-shrink-0 flex items-center">
               {/* Logo */}
@@ -12,8 +12,6 @@ const Navbaruser = () => {
                 SignPose3D
               </div>
             </div>
-            {/* This empty div keeps the space in the middle */}
-            <div className="flex-grow"></div>
   
             <div className="flex items-center">
               {/* Navigation Links */}

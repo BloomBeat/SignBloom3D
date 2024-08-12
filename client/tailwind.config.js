@@ -13,7 +13,11 @@ export default {
           base: '#21005D',
           content:'#EBDDFF',
         },
-      }
+      },
+      fontFamily:{
+        'notosans':["Noto Sans Thai", "sans-serif"],
+        'roboto':["Roboto", "sans-serif"],
+      },
     },
   },
   
