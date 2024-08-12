@@ -85,7 +85,6 @@ export const updateTicket = async (req, res) => {
 export const deleteTicket = async (req, res) => {
   try {
     const { id } = req.query;
-    // console.log(id);
     const deletedTicket = await Ticket.findByIdAndDelete(id);
     if (!deletedTicket) {
       return res.status(404).json({ message: "Ticket not found" });

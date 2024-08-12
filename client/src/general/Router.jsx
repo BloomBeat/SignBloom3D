@@ -49,6 +49,3 @@ export const Router = () => (
   </Routes>
   </>
 );
-
-// <Route path="" element="">
-// path prop -> <Route path="/hello" element={<div>hello world!</div>}/> localhost:5173/hello

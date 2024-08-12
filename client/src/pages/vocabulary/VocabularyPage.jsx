@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import Searchbar from "./_components/Searchbar.jsx"; 
 import FilterCategory from "../../components/FilterCategory";
-import FilterInterpreter from "../../components/FilterInterpreter";
 import FilterWordtype from "../../components/FilterWordtype";
 import { ArrowsUpDownIcon } from "@heroicons/react/20/solid";
 import MyDropdown from "./_components/Dropdown.jsx";
@@ -13,7 +12,6 @@ export const Vocabulary = () => {
     const [type, setType] = useState("ASC");
     const [page, setPage] = useState(1);
     const [category, setCategory] = useState(null);
-    // const [interpreter, setInterpreter] = useState(null);
     const [wordtype, setWordtype] = useState(null);
     const [searchbar, setSearchbar] = useState("");
     const [loading, setLoading] = useState(false);
@@ -61,7 +59,6 @@ export const Vocabulary = () => {
     
             let results = Array.isArray(response.data.suggestions) ? response.data.suggestions : [];
     
-            console.log("test")
             setHasMoreData(results.length > 0);
     
             results = results.map(item => ({
@@ -124,7 +121,6 @@ export const Vocabulary = () => {
                 <div className="flex flex-row justify-between w-full mt-4 gap-4">
                     <FilterCategory setCategory={setCategory} />
                     <FilterWordtype setWordtype={setWordtype} />
-                    {/* <FilterInterpreter setInterpreter={setInterpreter} /> */}
                 </div>
             </div>
 

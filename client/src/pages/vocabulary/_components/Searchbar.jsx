@@ -1,5 +1,3 @@
-import { Fragment } from 'react';
-
 function Searchbar({ setSearchbar }) {
     return (
         <>
