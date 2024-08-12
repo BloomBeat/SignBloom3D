@@ -12,56 +12,66 @@ export const AdminTicketPage = () => {
     const [type, setType] = useState("ASC");
     const [page, setPage] = useState(1);
     const [searchbar, setSearchbar] = useState("");
+    const [status, setStatus] = useState("");
     const [loading, setLoading] = useState(false);
+    const [hasMoreData, setHasMoreData] = useState(true);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
     const TableRef = useRef(null);
     const firstRender = useRef(true);
-    const [hasMoreData, setHasMoreData] = useState(true);
 
-    const handleRowClick = (index) => {
-        setActiveRowIndex(index);
-    }
+    const handleRowClick = (index) => setActiveRowIndex(index);
 
     const sorting = (order) => {
         const sorted = [...searchResults].sort((a, b) =>
             order === 'ASC'
-                ? a.name.localeCompare(b.name, 'th')
-                : b.name.localeCompare(a.name, 'th')
+                ? a.vocabulary.localeCompare(b.vocabulary, 'th')
+                : b.vocabulary.localeCompare(a.vocabulary, 'th')
         );
         setSearchResults(sorted);
-    }
+    };
 
     const sortingTime = () => {
         const sorted = [...searchResults].sort((a, b) => {
             const dateA = new Date(a.updated_at);
             const dateB = new Date(b.updated_at);
-    
             return type === 'ASC' ? dateA - dateB : dateB - dateA;
         });
-    
         setSearchResults(sorted);
         setType(prevType => prevType === 'ASC' ? 'DSC' : 'ASC');
     };
 
+    const formatPeriod = (startDate, endDate) => {
+        if (!startDate || !endDate) return '';
+    
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+    
+        const startPeriod = `${start.getFullYear()},${(start.getMonth() + 1).toString().padStart(2, '0')}`;
+        const endPeriod = `${end.getFullYear()},${(end.getMonth() + 1).toString().padStart(2, '0')}`;
+        
+        return `${startPeriod},${endPeriod}`;
+    };
+
     const fetchSearchResults = async (pageNum) => {
-        if (loading) return; 
+        if (loading) return;
         setLoading(true);
         try {
+            const period = formatPeriod(startDate, endDate);
             const response = await axios.get('http://localhost:3000/api/ticket', {
                 params: {
-
+                    find: searchbar || '',
+                    status: status || '',
+                    period: period || '',
+                    page: pageNum
                 }
             });
-    
             let results = Array.isArray(response.data.tickets) ? response.data.tickets : [];
-            
-            console.log(results)
-            setHasMoreData(results.length > 0);
-    
+            setHasMoreData(results.length > 0); 
             results = results.map(item => ({
                 ...item,
                 updated_at: new Date(item.updated_at).toISOString().split('T')[0]
             }));
-    
             setSearchResults(prevResults => [...prevResults, ...results]);
         } catch (error) {
             console.error('Error fetching search results:', error);
@@ -70,15 +80,51 @@ export const AdminTicketPage = () => {
         }
     };
     
+
+    const getStatusDiv = (status) => {
+        switch (status) {
+            case 'open':
+                return (
+                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-green-100 text-green-800">
+                        Open
+                    </div>
+                );
+            case 'in progress':
+                return (
+                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-blue-100 text-blue-800">
+                        In Progress
+                    </div>
+                );
+            case 'closed':
+                return (
+                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-red-100 text-red-800">
+                        Closed
+                    </div>
+                );
+            case 'on hold':
+                return (
+                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-amber-100 text-amber-800">
+                        On Hold
+                    </div>
+                );
+            default:
+                return (
+                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-gray-100 text-gray-600">
+                        Unknown
+                    </div>
+                );
+        }
+    };
+
     useEffect(() => {
         if (firstRender.current) {
             firstRender.current = false;
             return; 
         }
-        if(hasMoreData){
-        fetchSearchResults(page);
+        if (hasMoreData) {
+            fetchSearchResults(page);
         }
-    }, [page, searchbar ,hasMoreData]);
+    }, [page, searchbar, status, startDate, endDate, hasMoreData]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -100,72 +146,70 @@ export const AdminTicketPage = () => {
     }, []);
 
     useEffect(() => {
-        setSearchResults([]); 
-        setPage(1); 
+        setSearchResults([]);
+        setPage(1);
         setHasMoreData(true);
-    }, [searchbar]);
 
-
+    }, [searchbar, status, startDate, endDate]);
+    
     return (
         <div className="flex items-center flex-col h-[calc(100%-4rem)]">
-        <div className="xl:text-[5rem] text-[4rem] text-primary-base font-bold text-pri mt-10">
-            ปัญหาที่พบ
-        </div>
+            <div className="xl:text-[5rem] text-[4rem] text-primary-base font-bold text-pri mt-10">
+                ปัญหาที่พบ
+            </div>
 
-        <div className="flex flex-col justify-center items-center mt-14 lg:w-[57rem] w-3/4">
-        <Searchbar setSearchbar={setSearchbar} />
+            <div className="flex flex-col justify-center items-center mt-14 lg:w-[57rem] w-3/4">
+                <Searchbar setSearchbar={setSearchbar} />
+                <div className="flex flex-row justify-between w-full mt-4 gap-4">
+                    <FilterStatus setStatus={setStatus} />
+                    <FilterTime startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} />
+                </div>
+            </div>
 
-            <div className="flex flex-row justify-between w-full mt-4 gap-4">
-                <FilterStatus/>
-                <FilterTime/>
+            <div ref={TableRef} className="overflow-y-auto my-[4rem] w-10/12 flex flex-col items-center">
+                <table className="w-full table-fixed">
+                    <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left">
+                        <tr>
+                            <th className="sticky top-0 bg-white">
+                                <div className='relative flex flex-row justify-between w-full'>
+                                    <MyDropdown sorting={sorting} />
+                                </div>
+                            </th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">หมวดหมู่</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">ชนิดของคำ</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">รายระเอียด</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">สถานะ</th>
+                            <th onClick={sortingTime} className="py-3 px-4 cursor-pointer sticky top-0 bg-white">
+                                <div className='flex flex-row justify-between w-full'>
+                                    วันที่ <ArrowsUpDownIcon className='size-4 text-blue-500' />
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {searchResults.map((data, index) => (
+                            <tr
+                                key={index}
+                                onClick={() => handleRowClick(index)}
+                                className={`text-sm text-gray-600 border-b-2 cursor-pointer ${activeRowIndex === index ? 'bg-secondary-content' : 'hover:bg-gray-200'}`}
+                            >
+                                <td className="py-5 px-4 truncate">{data.vocabulary}</td>
+                                <td className="py-5 px-4 truncate">{data.category}</td>
+                                <td className="py-5 px-4 truncate">{data.parts_of_speech}</td>
+                                <td className="py-5 px-4 truncate">{data.description}</td>
+                                <td className="py-3 px-4 truncate text-center">
+                                    {getStatusDiv(data.status)}
+                                </td>
+                                <td className="py-5 px-4 truncate">{data.updated_at}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                {loading && <p className="text-center py-8">Loading...</p>}
+                {!hasMoreData && !loading && (
+                    <p className="text-center py-8 text-gray-500">No more data available</p>
+                )}
             </div>
         </div>
-
-        <div ref={TableRef} className="overflow-y-auto my-[4rem] w-10/12 flex flex-col items-center">
-<table className="w-full table-fixed">
-    <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left">
-        <tr>
-            <th className="sticky top-0 bg-white">
-                <div className='relative flex flex-row justify-between w-full'>
-                    <MyDropdown sorting={sorting} />
-                </div>
-            </th>
-            <th className="py-3 px-4 sticky top-0 bg-white">หมวดหมู่</th>
-            <th className="py-3 px-4 sticky top-0 bg-white">ชนิดของคำ</th>
-            <th className="py-3 px-4 sticky top-0 bg-white">รายระเอียด</th>
-            <th className="py-3 px-4 sticky top-0 bg-white">สถานะ</th>
-            <th onClick={sortingTime} className="py-3 px-4 cursor-pointer sticky top-0 bg-white">
-                    <div className='flex flex-row justify-between w-full'>
-                        วันที่ <ArrowsUpDownIcon className='size-4 text-blue-500' />
-                    </div>
-                </th>
-        </tr>
-    </thead>
-    <tbody>
-        {
-            searchResults.map((data, index) => (
-                <tr
-                    key={index}
-                    onClick={() => handleRowClick(index)}
-                    className={`text-sm text-gray-600 border-b-2 cursor-pointer ${activeRowIndex === index ? 'bg-secondary-content' : 'hover:bg-gray-200'}`}
-                >
-                    <td className="py-5 px-4 truncate"></td>
-                    <td className="py-5 px-4 truncate"></td>
-                    <td className="py-5 px-4 truncate"></td>
-                    <td className="py-5 px-4 truncate">{data.description}</td>
-                    <td className="py-5 px-4 truncate">{data.status}</td>
-                    <td className="py-5 px-4 truncate">{data.updated_at}</td>
-                </tr>
-            ))
-        }
-    </tbody>
-</table>
-{loading && <p className="text-center py-8">Loading...</p>}
-{!hasMoreData && !loading && (
-    <p className="text-center py-8 text-gray-500">No more data available</p>
-)}
-</div>
-
-    </div>
     );
 };

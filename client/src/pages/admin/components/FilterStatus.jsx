@@ -3,10 +3,10 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
 
 const statuses = [
-  { id: 1, name: 'ได้รับคำร้อง' },
-  { id: 2, name: 'ตรวจสอบคำร้อง' },
-  { id: 3, name: 'กำลังแก้ไข' },
-  { id: 4, name: 'แก้ไขเสร็จสิ้น' },
+  { id: 1, name: 'Open'},
+  { id: 2, name: 'Closed'},
+  { id: 3, name: 'In Progress'},
+  { id: 4, name: 'On hold'},
 ];
 
 function FilterStatus({ setStatus }) {
@@ -15,15 +15,15 @@ function FilterStatus({ setStatus }) {
   const handleChange = (status) => {
     setSelected(status);
     if (setStatus) {
-      setStatus(status.name);
+      setStatus(status.name.toLowerCase());
     }
   };
 
   const clearSelection = (event) => {
     event.stopPropagation();
     setSelected(null);
-    if (setWordtype) {
-      setWordtype(null);
+    if (setStatus) {
+      setStatus(null);
     }
   };
 

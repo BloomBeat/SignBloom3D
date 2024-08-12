@@ -27,9 +27,8 @@ export const getTicket = async (req, res) => {
     if (period) {
       const [startYear, startMonth, endYear, endMonth] = period.split(",");
 
-      // Construct the start and end dates
-      const startDate = new Date(startYear, startMonth - 1); // Month is 0-based
-      const endDate = new Date(endYear, endMonth, 0); // Last day of the end month
+      const startDate = new Date(startYear, startMonth - 1);
+      const endDate = new Date(endYear, endMonth, 0);
 
       matchCriteria.created_at = {
         $gte: startDate,
@@ -42,6 +41,47 @@ export const getTicket = async (req, res) => {
       { $sort: { created_at: sortOrder === "asc" ? 1 : -1 } },
       { $skip: skip },
       { $limit: Number(limit) },
+
+      // Join with the categories collection to get vocabulary data
+      {
+        $lookup: {
+          from: "categories",
+          let: { vocabId: "$vocabulary_id" },
+          pipeline: [
+            { $unwind: "$vocabularies" }, // Unwind the vocabularies array
+            {
+              $match: {
+                $expr: { $eq: ["$vocabularies._id", "$$vocabId"] },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                vocabulary: "$vocabularies.name",
+                category: "$category",
+                parts_of_speech: "$vocabularies.parts_of_speech",
+              },
+            },
+          ],
+          as: "vocabInfo",
+        },
+      },
+
+      { $unwind: "$vocabInfo" }, // Unwind vocabInfo to merge with ticket data
+
+      {
+        $addFields: {
+          vocabulary: "$vocabInfo.vocabulary",
+          category: "$vocabInfo.category",
+          parts_of_speech: "$vocabInfo.parts_of_speech",
+        },
+      },
+
+      {
+        $project: {
+          vocabInfo: 0, // Remove vocabInfo as it's no longer needed
+        },
+      },
     ];
 
     const totalResultsPipeline = [
@@ -49,7 +89,6 @@ export const getTicket = async (req, res) => {
       { $count: "total" },
     ];
 
-    // Execute aggregation pipelines
     const totalResults = await Ticket.aggregate(totalResultsPipeline);
     const totalCount = totalResults.length > 0 ? totalResults[0].total : 0;
 
