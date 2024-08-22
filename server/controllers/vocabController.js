@@ -25,13 +25,9 @@ export const vocabSuggestions = async (req, res) => {
 
     const pipeline = [
       { $unwind: "$vocabularies" },
-
       { $sort: { "vocabularies.updated_at": sortOrder === "asc" ? 1 : -1 } },
-
       { $match: matchCriteria },
-
       ...(sortAlphabet ? [{ $sort: { "vocabularies.name": 1 } }] : []),
-
       { $skip: skip },
       { $limit: Number(limit) },
 
@@ -112,5 +108,44 @@ export const getCategories = async (req, res) => {
   } catch (err) {
     console.error("Failed to fetch categories:", err);
     res.status(500).json({ error: "Failed to fetch categories" });
+  }
+};
+
+export const searchVocab = async (req, res) => {
+  try {
+    const find = req.query.find;
+    const regex = find ? new RegExp(`^${find}`, "i") : null;
+
+    const pipeline = [
+      {
+        $unwind: "$vocabularies",
+      },
+      {
+        $match: {
+          "vocabularies.name": { $regex: regex },
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          vocab: { $first: "$vocabularies" },
+        },
+      },
+      {
+        $project: {
+          _id: "$vocab._id", // Include the _id of the vocabulary
+          name: "$vocab.name", // Include the name of the vocabulary
+          category: "$_id", // Include the category
+        },
+      },
+      {
+        $limit: 6,
+      },
+    ];
+
+    const categories = await Category.aggregate(pipeline);
+    res.status(200).json(categories);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch suggestions" });
   }
 };
