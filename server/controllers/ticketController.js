@@ -127,12 +127,15 @@ export const createTicket = async (req, res) => {
 
     await ticket.save();
 
-    res.status(201).json(ticket);
+    res
+      .status(201)
+      .json({ message: "ticket created successfully", id: ticket.id });
   } catch (err) {
     console.error("Failed to create ticket:", err);
     res.status(500).json({ error: "Failed to create ticket" });
   }
 };
+
 export const updateTicket = async (req, res) => {
   try {
     const { id } = req.query;
@@ -170,7 +173,10 @@ export const deleteTicket = async (req, res) => {
       return res.status(404).json({ message: "Ticket not found" });
     }
 
-    res.status(200).json({ message: `Deleted ticket ${id} successfully` });
+    res.status(200).json({
+      message: `Deleted ticket ${id} successfully`,
+      ticket: deletedTicket,
+    });
   } catch (err) {
     console.error("Failed to delete ticket:", err);
     res.status(500).json({ error: "Failed to delete ticket" });
