@@ -11,21 +11,15 @@ export const getTicket = async (req, res) => {
       sortOrder = "desc",
     } = req.query;
 
+    const regex = find ? new RegExp(find, "i") : null;
     const skip = (page - 1) * limit;
+
     const matchCriteria = {};
-
-    if (find) {
-      const regex = new RegExp(find, "i");
-      matchCriteria.title = { $regex: regex };
-    }
-
-    if (status) {
-      matchCriteria.status = status;
-    }
+    if (status) matchCriteria.status = status;
+    if (regex) matchCriteria.title = { $regex: regex };
 
     if (period) {
       const [startYear, startMonth, endYear, endMonth] = period.split(",");
-
       const startDate = new Date(startYear, startMonth - 1);
       const endDate = new Date(endYear, endMonth, 0);
 
@@ -38,66 +32,64 @@ export const getTicket = async (req, res) => {
     const pipeline = [
       { $match: matchCriteria },
       { $sort: { created_at: sortOrder === "asc" ? 1 : -1 } },
-      { $skip: skip },
-      { $limit: Number(limit) },
-
-      // Join with the categories collection to get vocabulary data
       {
-        $lookup: {
-          from: "categories",
-          let: { vocabId: "$vocabulary_id" },
-          pipeline: [
-            { $unwind: "$vocabularies" }, // Unwind the vocabularies array
+        $facet: {
+          tickets: [
+            { $skip: skip },
+            { $limit: Number(limit) },
             {
-              $match: {
-                $expr: { $eq: ["$vocabularies._id", "$$vocabId"] },
+              $lookup: {
+                from: "categories",
+                let: { vocabId: "$vocabulary_id" },
+                pipeline: [
+                  { $unwind: "$vocabularies" },
+                  {
+                    $match: {
+                      $expr: { $eq: ["$vocabularies._id", "$$vocabId"] },
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 0,
+                      vocabulary: "$vocabularies.name",
+                      category: "$category",
+                      parts_of_speech: "$vocabularies.parts_of_speech",
+                    },
+                  },
+                ],
+                as: "vocabInfo",
+              },
+            },
+            { $unwind: "$vocabInfo" },
+            {
+              $addFields: {
+                vocabulary: "$vocabInfo.vocabulary",
+                category: "$vocabInfo.category",
+                parts_of_speech: "$vocabInfo.parts_of_speech",
               },
             },
             {
               $project: {
-                _id: 0,
-                vocabulary: "$vocabularies.name",
-                category: "$category",
-                parts_of_speech: "$vocabularies.parts_of_speech",
+                vocabInfo: 0,
               },
             },
           ],
-          as: "vocabInfo",
-        },
-      },
-
-      { $unwind: "$vocabInfo" }, // Unwind vocabInfo to merge with ticket data
-
-      {
-        $addFields: {
-          vocabulary: "$vocabInfo.vocabulary",
-          category: "$vocabInfo.category",
-          parts_of_speech: "$vocabInfo.parts_of_speech",
-        },
-      },
-
-      {
-        $project: {
-          vocabInfo: 0, // Remove vocabInfo as it's no longer needed
+          totalResults: [{ $count: "total" }],
         },
       },
     ];
 
-    const totalResultsPipeline = [
-      { $match: matchCriteria },
-      { $count: "total" },
-    ];
+    const result = await Ticket.aggregate(pipeline).exec();
 
-    const totalResults = await Ticket.aggregate(totalResultsPipeline);
-    const totalCount = totalResults.length > 0 ? totalResults[0].total : 0;
-
-    const tickets = await Ticket.aggregate(pipeline).exec();
+    const tickets = result[0].tickets;
+    const totalCount =
+      result[0].totalResults.length > 0 ? result[0].totalResults[0].total : 0;
 
     res.status(200).json({
       page: Number(page),
       limit: Number(limit),
       totalResults: totalCount,
-      tickets,
+      tickets: tickets,
     });
   } catch (err) {
     console.error("Failed to fetch tickets:", err);
