@@ -103,8 +103,11 @@ export const displayVocab = async (req, res) => {
 
 export const getCategories = async (req, res) => {
   try {
-    const categories = await Category.find({}, { category: 1 });
-    res.status(200).json(categories);
+    const categories = await Category.find({}, { _id: 0, category: 1 }).lean();
+    // Map the result to return an array of strings
+    const categoryList = categories.map((cat) => cat.category);
+
+    res.status(200).json(categoryList);
   } catch (err) {
     console.error("Failed to fetch categories:", err);
     res.status(500).json({ error: "Failed to fetch categories" });
