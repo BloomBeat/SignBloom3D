@@ -27,39 +27,40 @@ export const vocabSuggestions = async (req, res) => {
       { $unwind: "$vocabularies" },
       { $sort: { "vocabularies.updated_at": sortOrder === "asc" ? 1 : -1 } },
       { $match: matchCriteria },
-      ...(sortAlphabet ? [{ $sort: { "vocabularies.name": 1 } }] : []),
-      { $skip: skip },
-      { $limit: Number(limit) },
-
       {
-        $project: {
-          // _id: 0, // Uncomment this line if _id needs to be excluded
-          name: "$vocabularies.name",
-          category: "$category",
-          parts_of_speech: "$vocabularies.parts_of_speech",
-          description: "$vocabularies.description",
-          author: "$vocabularies.author",
-          updated_at: "$vocabularies.updated_at",
+        $facet: {
+          suggestions: [
+            ...(sortAlphabet ? [{ $sort: { "vocabularies.name": 1 } }] : []),
+            { $skip: skip },
+            { $limit: Number(limit) },
+            {
+              $project: {
+                // _id: 0, // Uncomment this line if _id needs to be excluded
+                name: "$vocabularies.name",
+                category: "$category",
+                parts_of_speech: "$vocabularies.parts_of_speech",
+                description: "$vocabularies.description",
+                author: "$vocabularies.author",
+                updated_at: "$vocabularies.updated_at",
+              },
+            },
+          ],
+          totalResults: [{ $count: "total" }],
         },
       },
     ];
 
-    const totalResultsPipeline = [
-      { $unwind: "$vocabularies" },
-      { $match: matchCriteria },
-      { $count: "total" },
-    ];
+    const result = await Category.aggregate(pipeline).exec();
 
-    const totalResults = await Category.aggregate(totalResultsPipeline);
-    const totalCount = totalResults.length > 0 ? totalResults[0].total : 0;
-
-    const vocabularySuggestions = await Category.aggregate(pipeline).exec();
+    const suggestions = result[0].suggestions;
+    const totalCount =
+      result[0].totalResults.length > 0 ? result[0].totalResults[0].total : 0;
 
     res.status(200).json({
       page: Number(page),
       limit: Number(limit),
       totalResults: totalCount,
-      suggestions: vocabularySuggestions,
+      suggestions: suggestions,
     });
   } catch (err) {
     console.error("Failed to fetch suggestions:", err);
