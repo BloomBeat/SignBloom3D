@@ -140,13 +140,16 @@ export const updateTicket = async (req, res) => {
   try {
     const { id } = req.query;
     const { description, status, admin_comments } = req.body;
+
     if (!description && !status && !admin_comments) {
       return res.status(400).json({ message: "No fields to update" });
     }
+
     const updateFields = {};
     if (description) updateFields.description = description;
     if (status) updateFields.status = status;
     if (admin_comments) updateFields.admin_comments = admin_comments;
+
     const updatedTicket = await Ticket.findByIdAndUpdate(id, updateFields, {
       new: true,
       runValidators: true,
@@ -156,7 +159,12 @@ export const updateTicket = async (req, res) => {
       return res.status(404).json({ message: "Ticket not found" });
     }
 
-    res.status(200).json(updatedTicket);
+    // Include the user information in the response
+    res.status(200).json({
+      message: "Ticket updated successfully",
+      user: req.user,
+      ticket: updatedTicket,
+    });
   } catch (err) {
     console.error("Failed to update ticket:", err);
     res.status(500).json({ error: "Failed to update ticket" });

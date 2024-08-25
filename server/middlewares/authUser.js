@@ -1,26 +1,36 @@
 import jwt from "jsonwebtoken";
 
-function authenticateUser(req, res, next) {
-  const token = req.headers.Authorization;
+export const authenticateUser = (req, res, next) => {
+  // Access the Authorization header
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).send("Unauthorized, No token");
+  }
+
+  // Extract the token from the "Bearer <token>" format
+  const token = authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(401).send("Unauthorized");
+    return res.status(401).send("Unauthorized, No token");
   }
 
   try {
-    //code to run before start
+    // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    res.user = { id: decoded.userID, email: decoded.email }; // */
+    req.user = { id: decoded.id, email: decoded.email };
 
-    //function check expired
-    const now = math.floor(Date.now() / 1000);
+    // Check if the token is expired
+    const now = Math.floor(Date.now() / 1000);
     if (decoded.exp < now) {
       return res.status(401).send("Token expired");
     }
 
+    // Pass control to the next middleware or route handler
     next();
   } catch (error) {
-    return res.status(401).send("Unauthorized");
+    return res
+      .status(401)
+      .send({ message: "unauthenticated", error: error.message });
   }
-}
-export default authenticateUser;
+};
