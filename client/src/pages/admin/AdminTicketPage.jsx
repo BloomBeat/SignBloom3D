@@ -3,7 +3,6 @@ import Searchbar from "../vocabulary/_components/Searchbar";
 import FilterStatus from "./components/FilterStatus";
 import FilterTime from "./components/FilterTime";
 import { ArrowsUpDownIcon } from "@heroicons/react/20/solid";
-import { Home } from "@heroicons/react/20/solid";
 import MyDropdown from "../vocabulary/_components/Dropdown";
 import axios from 'axios';
 
