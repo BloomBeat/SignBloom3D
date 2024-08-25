@@ -15,8 +15,7 @@ export const AdminTicketPage = () => {
     const [status, setStatus] = useState("");
     const [loading, setLoading] = useState(false);
     const [hasMoreData, setHasMoreData] = useState(true);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [value , setValue] = useState([null,null]);
     const TableRef = useRef(null);
     const firstRender = useRef(true);
 
@@ -31,6 +30,16 @@ export const AdminTicketPage = () => {
         setSearchResults(sorted);
     };
 
+    const formatPeriod = (value) => {
+        if (!value || value.length !== 2 || !value[0] || !value[1]) {
+            return '';
+        }
+        const startPeriod = `${value[0].getFullYear()},${(value[0].getMonth() + 1).toString().padStart(2, '0')}`;
+        const endPeriod = `${value[1].getFullYear()},${(value[1].getMonth() + 1).toString().padStart(2, '0')}`;
+        
+        return `${startPeriod},${endPeriod}`;
+    };
+
     const sortingTime = () => {
         const sorted = [...searchResults].sort((a, b) => {
             const dateA = new Date(a.updated_at);
@@ -41,23 +50,11 @@ export const AdminTicketPage = () => {
         setType(prevType => prevType === 'ASC' ? 'DSC' : 'ASC');
     };
 
-    const formatPeriod = (startDate, endDate) => {
-        if (!startDate || !endDate) return '';
-    
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-    
-        const startPeriod = `${start.getFullYear()},${(start.getMonth() + 1).toString().padStart(2, '0')}`;
-        const endPeriod = `${end.getFullYear()},${(end.getMonth() + 1).toString().padStart(2, '0')}`;
-        
-        return `${startPeriod},${endPeriod}`;
-    };
-
     const fetchSearchResults = async (pageNum) => {
         if (loading) return;
         setLoading(true);
         try {
-            const period = formatPeriod(startDate, endDate);
+            const period = formatPeriod(value);
             const response = await axios.get('http://localhost:3000/api/ticket', {
                 params: {
                     find: searchbar || '',
@@ -80,7 +77,6 @@ export const AdminTicketPage = () => {
         }
     };
     
-
     const getStatusDiv = (status) => {
         switch (status) {
             case 'open':
@@ -124,7 +120,7 @@ export const AdminTicketPage = () => {
         if (hasMoreData) {
             fetchSearchResults(page);
         }
-    }, [page, searchbar, status, startDate, endDate, hasMoreData]);
+    }, [page, searchbar, status, value, hasMoreData]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -149,8 +145,7 @@ export const AdminTicketPage = () => {
         setSearchResults([]);
         setPage(1);
         setHasMoreData(true);
-
-    }, [searchbar, status, startDate, endDate]);
+    }, [searchbar, status, value]);
     
     return (
         <div className="flex items-center flex-col h-[calc(100%-4rem)]">
@@ -162,7 +157,7 @@ export const AdminTicketPage = () => {
                 <Searchbar setSearchbar={setSearchbar} />
                 <div className="flex flex-row justify-between w-full mt-4 gap-4">
                     <FilterStatus setStatus={setStatus} />
-                    <FilterTime startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} />
+                    <FilterTime value={value} setValue={setValue}/>
                 </div>
             </div>
 
