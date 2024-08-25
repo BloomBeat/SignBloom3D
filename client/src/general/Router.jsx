@@ -12,6 +12,11 @@ import { NotFound } from "./NotFound.jsx";
 import { Layout } from "./Layout.jsx";
 import Navbaruser from "../components/Navbaruser.jsx";
 import { Vocabulary } from "../pages/vocabulary/VocabularyPage.jsx";
+// import { Support } from "../pages/support/SupportPage.jsx";
+// import { AboutUs } from "../pages/aboutus/AboutUsPage.jsx";
+// import { Register } from "../pages/register/RegisterPage.jsx";
+// import { Login } from "../pages/login/LoginPage.jsx";
+
 
 export const Router = () => (
   <>
@@ -27,7 +32,6 @@ export const Router = () => (
         </Layout>
       }
     />
-    {/* Add more routes here */}
     <Route
       path="*" // localhost:5173/3D 
       element={
@@ -38,14 +42,50 @@ export const Router = () => (
       }
     /> 
     <Route
-      path="vocabulary" // localhost:5173/vocabulary
+      path={RoutePaths.VOCAB} // localhost:5173/vocabulary
       element={
         <Layout>
           <Navbaruser/>
-          <Vocabulary />
+          <Vocabulary/>
+        </Layout>
+      }
+    />
+    {/* <Route
+      path="support" // localhost:5173/support
+      element={
+        <Layout>
+          <Navbaruser/>
+          <Support/>
         </Layout>
       }
     /> 
+    <Route
+      path="aboutus" // localhost:5173/aboutus
+      element={
+        <Layout>
+          <Navbaruser/>
+          <AboutUs/>
+        </Layout>
+      }
+    />
+    <Route
+      path="register" // localhost:5173/register
+      element={
+        <Layout>
+          <Navbaruser/>
+          <Register/>
+        </Layout>
+      }
+    />
+    <Route
+      path="login" // localhost:5173/login
+      element={
+        <Layout>
+          <Navbaruser/>
+          <Login/>
+        </Layout>
+      }
+    /> */}
   </Routes>
   </>
 );

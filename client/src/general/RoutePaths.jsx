@@ -9,5 +9,9 @@
 
 export const RoutePaths = {
   HOME: "/",
-  VOCAB: "/vocabulary"
+  VOCAB: "/vocabulary",
+  SUPPORT: "/support",
+  ABOUTUS: "/aboutus",
+  REGISTER: "/register",
+  LOGIN: "/login",
 };
