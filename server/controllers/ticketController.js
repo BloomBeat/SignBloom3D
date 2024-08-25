@@ -11,7 +11,12 @@ export const getTicket = async (req, res) => {
       sortOrder = "desc",
     } = req.query;
 
-    const regex = find ? new RegExp(find, "i") : null;
+    // Matched by beginning letters
+    // const regex = find ? new RegExp(find, "i") : null;
+
+    // Matched by exact word anywhere
+    const regex = find ? new RegExp(`${find}`, "i") : null;
+
     const skip = (page - 1) * limit;
 
     const matchCriteria = {};
