@@ -3,6 +3,7 @@ import Searchbar from "../vocabulary/_components/Searchbar";
 import FilterStatus from "./components/FilterStatus";
 import FilterTime from "./components/FilterTime";
 import { ArrowsUpDownIcon } from "@heroicons/react/20/solid";
+import { Home } from "@heroicons/react/20/solid";
 import MyDropdown from "../vocabulary/_components/Dropdown";
 import axios from 'axios';
 
@@ -165,6 +166,7 @@ export const AdminTicketPage = () => {
                 <table className="w-full table-fixed">
                     <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left">
                         <tr>
+                        <th className="py-3 px-4 sticky top-0 bg-white">หัวข้อ</th>
                             <th className="sticky top-0 bg-white">
                                 <div className='relative flex flex-row justify-between w-full'>
                                     <MyDropdown sorting={sorting} />
@@ -188,6 +190,7 @@ export const AdminTicketPage = () => {
                                 onClick={() => handleRowClick(index)}
                                 className={`text-sm text-gray-600 border-b-2 cursor-pointer ${activeRowIndex === index ? 'bg-secondary-content' : 'hover:bg-gray-200'}`}
                             >
+                                <td className="py-5 px-4 truncate">{data.title}</td>
                                 <td className="py-5 px-4 truncate">{data.vocabulary}</td>
                                 <td className="py-5 px-4 truncate">{data.category}</td>
                                 <td className="py-5 px-4 truncate">{data.parts_of_speech}</td>
