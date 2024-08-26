@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
-import axios from 'axios';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import axios from 'axios';
 
 function FilterCategory({ setCategory }) {
   const [searchResults, setSearchResults] = useState([]);
@@ -36,7 +36,7 @@ function FilterCategory({ setCategory }) {
     } else {
       setFilteredResults(
         searchResults.filter((item) =>
-          item.category.toLowerCase().includes(query.toLowerCase())
+          item.toLowerCase().includes(query.toLowerCase())
         )
       );
     }
@@ -87,7 +87,7 @@ function FilterCategory({ setCategory }) {
                 <input
                   type="text"
                   value={query}
-                  className="w-full rounded-md border-2 border-gray-300 pl-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                  className="w-full bg-white rounded-md border-2 border-gray-300 pl-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm"
                   placeholder="ค้นหา..."
                   onChange={(e) => setQuery(e.target.value)}
                 />
@@ -101,14 +101,14 @@ function FilterCategory({ setCategory }) {
                   <Listbox.Option
                     key={idx}
                     className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'}`
+                      `relative cursor-default py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'}`
                     }
-                    value={item.category}
-                  >
+                    value={item}
+                  > 
                     {({ selected }) => (
                       <>
                         <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                          {item.category}
+                          {item}
                         </span>
                         {selected && (
                           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">

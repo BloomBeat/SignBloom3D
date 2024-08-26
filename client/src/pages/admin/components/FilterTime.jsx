@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState, useRef, useEffect, Fragment } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { MantineProvider } from '@mantine/core';
@@ -7,9 +7,10 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import 'dayjs/locale/th';
 
-function FilterTime({value, setValue}) {
+function FilterTime({ value, setValue }) {
   const [showPicker, setShowPicker] = useState(false);
   const [prevValue, setPrevValue] = useState([null, null]);
+  const pickerRef = useRef(null);
 
   const handleClear = (event) => {
     event.stopPropagation();
@@ -19,7 +20,7 @@ function FilterTime({value, setValue}) {
 
   const handleChange = (newValue) => {
     if (newValue[0] && newValue[1]) {
-      setValue([new Date(newValue[0]),new Date(newValue[1])]);
+      setValue([new Date(newValue[0]), new Date(newValue[1])]);
       setPrevValue(newValue);
       if (newValue[0] !== prevValue[0] || newValue[1] !== prevValue[1]) {
         setShowPicker(false);
@@ -29,7 +30,18 @@ function FilterTime({value, setValue}) {
     }
   };
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+        setShowPicker(false);
+      }
+    }
 
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [pickerRef]);
 
   return (
     <MantineProvider>
@@ -57,18 +69,20 @@ function FilterTime({value, setValue}) {
             <Transition
               as={Fragment}
               show={showPicker}
-              leave="transition ease-in duration-100"
+              leave="transition ease-in duration-250"
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <MonthPicker
-                className='absolute flex justify-center mt-1 py-2 z-10 w-full bg-white rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none'
-                type="range"
-                allowSingleDateInRange
-                value={prevValue}
-                onChange={handleChange}
-                locale="th"
-              />
+              <div ref={pickerRef}>
+                <MonthPicker
+                  className="absolute flex justify-center mt-1 py-2 z-10 w-full bg-white rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none"
+                  type="range"
+                  allowSingleDateInRange
+                  value={prevValue}
+                  onChange={handleChange}
+                  locale="th"
+                />
+              </div>
             </Transition>
           </div>
         </Listbox>

@@ -17,7 +17,7 @@ export const HomePage = () => {
         item.name.toLowerCase().includes(query.toLowerCase())
   );
   return (
-    <div className="h-[calc(100%-4rem)] flex flex-col items-center justify-center -translate-y-[4rem]">
+    <div className="h-4/5 flex flex-col items-center justify-center">
 
           {/* Image */}
           {/* <img src="/SignBloom3DLogo.png" alt="Public Image" /> */}
