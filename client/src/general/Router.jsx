@@ -12,6 +12,7 @@ import { NotFound } from "./NotFound.jsx";
 import { Layout } from "./Layout.jsx";
 import Navbaruser from "../components/Navbaruser.jsx";
 import { Vocabulary } from "../pages/vocabulary/VocabularyPage.jsx";
+import { AdminTicketPage } from "../pages/admin/AdminTicketPage.jsx"
 // import { Support } from "../pages/support/SupportPage.jsx";
 // import { AboutUs } from "../pages/aboutus/AboutUsPage.jsx";
 // import { Register } from "../pages/register/RegisterPage.jsx";
@@ -60,6 +61,7 @@ export const Router = () => (
         </Layout>
       }
     />
+
     {/* <Route
       path="support" // localhost:5173/support
       element={

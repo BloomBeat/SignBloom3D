@@ -1,10 +1,10 @@
 import { Combobox } from '@headlessui/react';
 
-
 function SearchBar({
   selectedSearch,
   setSelectedSearch,
   setQuery,
+  searchResults
 }) {
 
   return (
@@ -16,6 +16,13 @@ function SearchBar({
           displayValue={(item) => (item ? item.name : '')}
           placeholder="ค้นหา..."
         />
+        <Combobox.Options>
+          {searchResults.map((person) => (
+            <Combobox.Option key={person} value={person}>
+              {person.name}
+            </Combobox.Option>
+          ))}
+        </Combobox.Options>
       </div>
     </Combobox>
   );
