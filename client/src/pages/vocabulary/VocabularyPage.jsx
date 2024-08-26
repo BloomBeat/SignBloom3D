@@ -126,7 +126,7 @@ export const Vocabulary = () => {
 
             <div ref={TableRef} className="overflow-y-auto my-[4rem] w-10/12 flex flex-col items-center">
     <table className="w-full table-fixed">
-        <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left">
+        <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left text-black">
             <tr>
                 <th className="sticky top-0 bg-white">
                     <div className='relative flex flex-row justify-between w-full'>

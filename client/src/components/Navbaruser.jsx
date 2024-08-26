@@ -9,7 +9,7 @@ const Navbaruser = () => {
               {/* Logo */}
               {/* <img className="h-8 w-auto" src="./public/SignBloom3DLogo.png" alt="Logo" /> */}
               <div className="text-xl font-bold bg-gradient-to-r from-[#64558E_65.5%] to-[#EBDDFF_98.5%] bg-clip-text text-transparent">
-                SignPose3D
+                SignBloom3D
               </div>
             </div>
   
@@ -34,5 +34,4 @@ const Navbaruser = () => {
   };
 
 export default Navbaruser;
-
 

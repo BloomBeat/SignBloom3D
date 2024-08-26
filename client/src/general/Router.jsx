@@ -7,27 +7,37 @@
 
 import { Route, Routes } from "react-router-dom";
 import { RoutePaths } from "./RoutePaths.jsx";
-import { Home } from "../pages/home/HomePage.jsx";
+import { HomePage } from "../pages/home/HomePage.jsx";
 import { NotFound } from "./NotFound.jsx";
 import { Layout } from "./Layout.jsx";
 import Navbaruser from "../components/Navbaruser.jsx";
 import { Vocabulary } from "../pages/vocabulary/VocabularyPage.jsx";
+import { AdminTicketPage } from "../pages/admin/AdminTicketPage.jsx"
 
 export const Router = () => (
   <>
   <Routes>
     <Route
-      //
       path={RoutePaths.HOME} // URL to the home page
       element={
         // What will be rendered
         <Layout>
           <Navbaruser/>
-          <Home />
+          <HomePage />
         </Layout>
       }
     />
-    {/* Add more routes here */}
+    <Route
+      //
+      path={RoutePaths.ADMINTICKET} // URL to the home page
+      element={
+        // What will be rendered
+        <Layout>
+          <Navbaruser/>
+          <AdminTicketPage/>
+        </Layout>
+      }
+    />
     <Route
       path="*" // localhost:5173/3D 
       element={

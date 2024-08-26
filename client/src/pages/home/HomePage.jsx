@@ -3,7 +3,7 @@ import SearchBar from '../../components/Searchbar';
 import CustomBtn from '../../components/Botton';
 import api from '../../hooks/api';
 
-export const Home = () => {
+export const HomePage = () => {
   const [message, setMessage] = useState("");
   const [searchResults, setSearchResults] = useState([]); // hold search results
   const [selectedSearch, setSelectedSearch] = useState(null); // hold the selected item
@@ -11,14 +11,13 @@ export const Home = () => {
 
   // Filter the search results based on the query
   const filteredSearchResults =
-  query === ''
-    ? searchResults
-    : searchResults.filter((item) =>
+    query === ''
+      ? searchResults
+      : searchResults.filter((item) =>
         item.name.toLowerCase().includes(query.toLowerCase())
-    );
-
+  );
   return (
-    <div className="h-[calc(100%-4rem)] flex flex-col items-center justify-center -translate-y-[4rem]">
+    <div className="h-4/5 flex flex-col items-center justify-center">
 
           {/* Image */}
           {/* <img src="/SignBloom3DLogo.png" alt="Public Image" /> */}
@@ -41,3 +40,4 @@ export const Home = () => {
     </div>
   )
 };
+
