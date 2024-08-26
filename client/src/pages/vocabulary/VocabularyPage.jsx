@@ -48,7 +48,7 @@ export const Vocabulary = () => {
         if (loading) return; 
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:3000/api/vocab', {
+            const response = await axios.get('/api/vocab', {
                 params: {
                     find: searchbar || '',
                     category: category || '',
