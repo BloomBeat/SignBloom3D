@@ -7,7 +7,7 @@
 
 import { Route, Routes } from "react-router-dom";
 import { RoutePaths } from "./RoutePaths.jsx";
-import { Home } from "../pages/home/HomePage.jsx";
+import { HomePage } from "../pages/home/HomePage.jsx";
 import { NotFound } from "./NotFound.jsx";
 import { Layout } from "./Layout.jsx";
 import Navbaruser from "../components/Navbaruser.jsx";
@@ -22,13 +22,23 @@ export const Router = () => (
   <>
   <Routes>
     <Route
-      //
       path={RoutePaths.HOME} // URL to the home page
       element={
         // What will be rendered
         <Layout>
           <Navbaruser/>
-          <Home />
+          <HomePage />
+        </Layout>
+      }
+    />
+    <Route
+      //
+      path={RoutePaths.ADMINTICKET} // URL to the home page
+      element={
+        // What will be rendered
+        <Layout>
+          <Navbaruser/>
+          <AdminTicketPage/>
         </Layout>
       }
     />

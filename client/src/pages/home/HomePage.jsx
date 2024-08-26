@@ -4,7 +4,7 @@ import CustomBtn from '../../components/Botton';
 import api from '../../hooks/api';
 import axios from "axios";
 
-export const Home = () => {
+export const HomePage = () => {
   const [message, setMessage] = useState("");
   const [searchResults, setSearchResults] = useState([]); // hold search results
   const [selectedSearch, setSelectedSearch] = useState(null); // hold the selected item
@@ -32,12 +32,11 @@ export const Home = () => {
 
   // Filter the search results based on the query
   const filteredSearchResults =
-  query === ''
-    ? searchResults
-    : searchResults.filter((item) =>
+    query === ''
+      ? searchResults
+      : searchResults.filter((item) =>
         item.name.toLowerCase().includes(query.toLowerCase())
-    );
-
+  );
   return (
     <div className="h-4/5 flex flex-col items-center justify-center">
 
@@ -62,3 +61,4 @@ export const Home = () => {
     </div>
   )
 };
+

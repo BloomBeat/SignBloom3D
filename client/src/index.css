@@ -6,4 +6,5 @@
 
 body {
     @apply font-notosans;
+    @apply text-black;
   }

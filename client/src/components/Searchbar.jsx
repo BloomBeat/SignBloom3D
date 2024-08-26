@@ -1,6 +1,5 @@
-import { Fragment } from 'react';
 import { Combobox } from '@headlessui/react';
-import { CheckIcon } from '@heroicons/react/20/solid';
+
 
 function SearchBar({
   selectedSearch,
