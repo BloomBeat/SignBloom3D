@@ -1,13 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
-import {debounce} from 'lodash';
+import { useState, useEffect, useCallback } from "react"; //manage state, side effect, memorized callback
+import {debounce} from 'lodash'; //delays
 import SearchBar from '../../components/Searchbar';
 import CustomBtn from '../../components/Botton';
 
-export const HomePage = () => {
-  const [message, setMessage] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+export const HomePage = () => { //define function HomPage
+  const [searchResults, setSearchResults] = useState([]); 
   const [selectedSearch, setSelectedSearch] = useState(null);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState('')
 
   // Debounced function to fetch search results
   const fetchSearchResults = useCallback(
@@ -18,24 +17,25 @@ export const HomePage = () => {
         setSearchResults(data.suggestions);
       } catch (error) {
         console.error('Error fetching search results:', error);
-        setMessage('Failed to load search results');
+       
       }
-    }, 200), 
+    }, 200), //not sending too many API
     []
   );
   
   useEffect(() => {
-    if (query) {
       fetchSearchResults(query);
-    }
-  }, [query, fetchSearchResults]);
+      console.log
+  }, [query]);
 
   // Filter the search results based on the query
   const filteredSearchResults =
     query === ''
+    // 20 =='20':true
+    // 20 ==='20':false
       ? searchResults
-      : searchResults.filter((item) =>
-        item.name.toLowerCase().includes(query.toLowerCase())
+      : searchResults.filter((item) => //check(filter) item[] is in db 
+        item.name.toLowerCase().includes(query.toLowerCase())//check name in item[]. Is it in db
   );
 
   return (
@@ -53,7 +53,7 @@ export const HomePage = () => {
             selectedSearch={selectedSearch}
             setSelectedSearch={setSelectedSearch}
             setQuery={setQuery}
-            filteredSearchResults={filteredSearchResults}
+            // filteredSearchResults={filteredSearchResults}
             searchResults = {searchResults}
           />
           <CustomBtn label="ค้นหา"/>
