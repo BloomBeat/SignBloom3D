@@ -82,31 +82,37 @@ export const AdminTicketPage = () => {
             case 'open':
                 return (
                     <div className="w-fit h-fit px-4 py-2 rounded-md bg-green-100 text-green-800">
-                        Open
+                        ได้รับ
                     </div>
                 );
             case 'in progress':
                 return (
                     <div className="w-fit h-fit px-4 py-2 rounded-md bg-blue-100 text-blue-800">
-                        In Progress
+                        เเก้ไข
                     </div>
                 );
             case 'closed':
                 return (
-                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-red-100 text-red-800">
-                        Closed
+                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-purple-100 text-purple-800">
+                        เสร็จสิ้น
                     </div>
                 );
             case 'on hold':
                 return (
                     <div className="w-fit h-fit px-4 py-2 rounded-md bg-amber-100 text-amber-800">
-                        On Hold
+                        ตรวจสอบ
+                    </div>
+                );
+            case 'canceled':
+                return (
+                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-red-100 text-red-800">
+                        ปฎิเสธ
                     </div>
                 );
             default:
                 return (
                     <div className="w-fit h-fit px-4 py-2 rounded-md bg-gray-100 text-gray-600">
-                        Unknown
+                        ไม่ทราบ
                     </div>
                 );
         }
