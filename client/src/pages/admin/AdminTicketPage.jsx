@@ -18,6 +18,7 @@ export const AdminTicketPage = () => {
     const [value, setValue] = useState([null, null]);
     const TableRef = useRef(null);
     const firstRender = useRef(true);
+    const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
     const handleRowClick = (index) => setActiveRowIndex(index);
 
@@ -119,7 +120,6 @@ export const AdminTicketPage = () => {
     };
 
     useEffect(() => {
-        setTimeout(() => {
             if (firstRender.current) {
                 firstRender.current = false;
                 return;
@@ -127,8 +127,14 @@ export const AdminTicketPage = () => {
             if (hasMoreData) {
                 fetchSearchResults(page);
             }
-        }, 100);
-    }, [page, searchbar, status, value, hasMoreData]);
+    }, [page, initialLoadComplete, hasMoreData]);
+
+    useEffect(() => {
+        setSearchResults([]);
+        setPage(1);
+        setHasMoreData(true);
+        setInitialLoadComplete(!initialLoadComplete)
+    }, [searchbar, status, value]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -148,12 +154,6 @@ export const AdminTicketPage = () => {
             }
         };
     }, []);
-
-    useEffect(() => {
-        setSearchResults([]);
-        setPage(1);
-        setHasMoreData(true);
-    }, [searchbar, status, value]);
 
     return (
         <div className="flex items-center flex-col h-[calc(100%-4rem)]">
