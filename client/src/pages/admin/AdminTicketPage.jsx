@@ -55,7 +55,7 @@ export const AdminTicketPage = () => {
         setLoading(true);
         try {
             const period = formatPeriod(value);
-            const response = await axios.get('http://localhost:3000/api/ticket', {
+            const response = await axios.get('/api/ticket', {
                 params: {
                     find: searchbar || '',
                     status: status || '',
