@@ -53,7 +53,6 @@ export const HomePage = () => { //define function HomPage
             selectedSearch={selectedSearch}
             setSelectedSearch={setSelectedSearch}
             setQuery={setQuery}
-            // filteredSearchResults={filteredSearchResults}
             searchResults = {searchResults}
           />
           <CustomBtn label="ค้นหา"/>

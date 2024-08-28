@@ -17,10 +17,10 @@ const Navbaruser = () => {
   
             <div className="flex items-center">
               {/* Navigation Links */}
-              <div className="md:ml-6 md:flex md:space-x-8">
-                <Link to="/vocabulary" className="text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">คำศัพท์</Link>
-                <Link to="/support" className="text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">สนับสนุน</Link>
-                <Link to="/aboutus" className="text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">เกี่ยวกับเรา</Link>
+              <div className="md:ml-6 md:flex md:space-x-8 text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium ">
+                <Link to="/vocabulary">คำศัพท์</Link>
+                <Link to="/support" >สนับสนุน</Link>
+                <Link to="/aboutus">เกี่ยวกับเรา</Link>
               </div>
   
               {/* Buttons */}
