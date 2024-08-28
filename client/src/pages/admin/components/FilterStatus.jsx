@@ -15,10 +15,13 @@ function FilterStatus({ setStatus }) {
 
   const handleChange = (status) => {
     setSelected(status);
-    if (setStatus) {
-      setStatus(status.name.toLowerCase());
-    }
+    setTimeout(() => {
+      if (setStatus) {
+        setStatus(status.name.toLowerCase());
+      }
+    }, 100);
   };
+  
 
   const clearSelection = (event) => {
     event.stopPropagation();
