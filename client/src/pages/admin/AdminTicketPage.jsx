@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import Searchbar from "../vocabulary/_components/Searchbar"; 
+import Searchbar from "../vocabulary/_components/Searchbar";
 import FilterStatus from "./components/FilterStatus";
 import FilterTime from "./components/FilterTime";
 import { ArrowsUpDownIcon } from "@heroicons/react/20/solid";
@@ -15,7 +15,7 @@ export const AdminTicketPage = () => {
     const [status, setStatus] = useState("");
     const [loading, setLoading] = useState(false);
     const [hasMoreData, setHasMoreData] = useState(true);
-    const [value , setValue] = useState([null,null]);
+    const [value, setValue] = useState([null, null]);
     const TableRef = useRef(null);
     const firstRender = useRef(true);
 
@@ -36,7 +36,7 @@ export const AdminTicketPage = () => {
         }
         const startPeriod = `${value[0].getFullYear()},${(value[0].getMonth() + 1).toString().padStart(2, '0')}`;
         const endPeriod = `${value[1].getFullYear()},${(value[1].getMonth() + 1).toString().padStart(2, '0')}`;
-        
+
         return `${startPeriod},${endPeriod}`;
     };
 
@@ -64,7 +64,7 @@ export const AdminTicketPage = () => {
                 }
             });
             let results = Array.isArray(response.data.tickets) ? response.data.tickets : [];
-            setHasMoreData(results.length > 0); 
+            setHasMoreData(results.length > 0);
             results = results.map(item => ({
                 ...item,
                 updated_at: new Date(item.updated_at).toISOString().split('T')[0]
@@ -76,7 +76,7 @@ export const AdminTicketPage = () => {
             setLoading(false);
         }
     };
-    
+
     const getStatusDiv = (status) => {
         switch (status) {
             case 'open':
@@ -119,13 +119,15 @@ export const AdminTicketPage = () => {
     };
 
     useEffect(() => {
-        if (firstRender.current) {
-            firstRender.current = false;
-            return; 
-        }
-        if (hasMoreData) {
-            fetchSearchResults(page);
-        }
+        setTimeout(() => {
+            if (firstRender.current) {
+                firstRender.current = false;
+                return;
+            }
+            if (hasMoreData) {
+                fetchSearchResults(page);
+            }
+        }, 100);
     }, [page, searchbar, status, value, hasMoreData]);
 
     useEffect(() => {
@@ -152,7 +154,7 @@ export const AdminTicketPage = () => {
         setPage(1);
         setHasMoreData(true);
     }, [searchbar, status, value]);
-    
+
     return (
         <div className="flex items-center flex-col h-[calc(100%-4rem)]">
             <div className="xl:text-[5rem] text-[4rem] text-primary-base font-bold text-pri mt-10">
@@ -163,7 +165,7 @@ export const AdminTicketPage = () => {
                 <Searchbar setSearchbar={setSearchbar} />
                 <div className="flex flex-row justify-between w-full mt-4 gap-4">
                     <FilterStatus setStatus={setStatus} />
-                    <FilterTime value={value} setValue={setValue}/>
+                    <FilterTime value={value} setValue={setValue} />
                 </div>
             </div>
 
@@ -171,7 +173,7 @@ export const AdminTicketPage = () => {
                 <table className="w-full table-fixed">
                     <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left">
                         <tr>
-                        <th className="py-3 px-4 sticky top-0 bg-white">หัวข้อ</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">หัวข้อ</th>
                             <th className="sticky top-0 bg-white">
                                 <div className='relative flex flex-row justify-between w-full'>
                                     <MyDropdown sorting={sorting} />

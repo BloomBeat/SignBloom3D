@@ -12,11 +12,9 @@ function FilterCategory({ setCategory }) {
 
   const handleChange = (category) => {
     setSelected(category);
-    setTimeout(() => {
       if (setCategory) {
         setCategory(category);
       }
-    }, 100);
   };
 
   const clearSelection = (event) => {

@@ -15,11 +15,9 @@ function FilterStatus({ setStatus }) {
 
   const handleChange = (status) => {
     setSelected(status);
-    setTimeout(() => {
       if (setStatus) {
         setStatus(status.name.toLowerCase());
       }
-    }, 100);
   };
   
 

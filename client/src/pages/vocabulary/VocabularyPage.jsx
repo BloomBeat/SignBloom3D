@@ -75,14 +75,22 @@ export const Vocabulary = () => {
     };
     
     useEffect(() => {
-        if (firstRender.current) {
-            firstRender.current = false;
-            return; 
-        }
-        if(hasMoreData){
-        fetchSearchResults(page);
-        }
+        setTimeout(() => {
+            if (firstRender.current) {
+                firstRender.current = false;
+                return; 
+            }
+            if(hasMoreData){
+            fetchSearchResults(page);
+            }
+          }, 100);
     }, [page, category, wordtype, searchbar ,hasMoreData]);
+
+    useEffect(() => {
+        setSearchResults([]); 
+        setPage(1); 
+        setHasMoreData(true);
+    }, [category, wordtype, searchbar]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -102,12 +110,6 @@ export const Vocabulary = () => {
             }
         };
     }, []);
-
-    useEffect(() => {
-        setSearchResults([]); 
-        setPage(1); 
-        setHasMoreData(true);
-    }, [category, wordtype, searchbar]);
 
     return (
         <div className="flex items-center flex-col h-[calc(100%-4rem)]">
