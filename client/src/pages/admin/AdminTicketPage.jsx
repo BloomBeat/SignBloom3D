@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import Searchbar from "../vocabulary/_components/Searchbar"; 
+import Searchbar from "../vocabulary/_components/Searchbar";
 import FilterStatus from "./components/FilterStatus";
 import FilterTime from "./components/FilterTime";
 import { ArrowsUpDownIcon } from "@heroicons/react/20/solid";
@@ -15,9 +15,10 @@ export const AdminTicketPage = () => {
     const [status, setStatus] = useState("");
     const [loading, setLoading] = useState(false);
     const [hasMoreData, setHasMoreData] = useState(true);
-    const [value , setValue] = useState([null,null]);
+    const [value, setValue] = useState([null, null]);
     const TableRef = useRef(null);
     const firstRender = useRef(true);
+    const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
     const handleRowClick = (index) => setActiveRowIndex(index);
 
@@ -36,7 +37,7 @@ export const AdminTicketPage = () => {
         }
         const startPeriod = `${value[0].getFullYear()},${(value[0].getMonth() + 1).toString().padStart(2, '0')}`;
         const endPeriod = `${value[1].getFullYear()},${(value[1].getMonth() + 1).toString().padStart(2, '0')}`;
-        
+
         return `${startPeriod},${endPeriod}`;
     };
 
@@ -64,7 +65,7 @@ export const AdminTicketPage = () => {
                 }
             });
             let results = Array.isArray(response.data.tickets) ? response.data.tickets : [];
-            setHasMoreData(results.length > 0); 
+            setHasMoreData(results.length > 0);
             results = results.map(item => ({
                 ...item,
                 updated_at: new Date(item.updated_at).toISOString().split('T')[0]
@@ -76,51 +77,64 @@ export const AdminTicketPage = () => {
             setLoading(false);
         }
     };
-    
+
     const getStatusDiv = (status) => {
         switch (status) {
             case 'open':
                 return (
                     <div className="w-fit h-fit px-4 py-2 rounded-md bg-green-100 text-green-800">
-                        Open
+                        ได้รับ
                     </div>
                 );
             case 'in progress':
                 return (
                     <div className="w-fit h-fit px-4 py-2 rounded-md bg-blue-100 text-blue-800">
-                        In Progress
+                        เเก้ไข
                     </div>
                 );
             case 'closed':
                 return (
-                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-red-100 text-red-800">
-                        Closed
+                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-purple-100 text-purple-800">
+                        เสร็จสิ้น
                     </div>
                 );
             case 'on hold':
                 return (
                     <div className="w-fit h-fit px-4 py-2 rounded-md bg-amber-100 text-amber-800">
-                        On Hold
+                        ตรวจสอบ
+                    </div>
+                );
+            case 'canceled':
+                return (
+                    <div className="w-fit h-fit px-4 py-2 rounded-md bg-red-100 text-red-800">
+                        ปฎิเสธ
                     </div>
                 );
             default:
                 return (
                     <div className="w-fit h-fit px-4 py-2 rounded-md bg-gray-100 text-gray-600">
-                        Unknown
+                        ไม่ทราบ
                     </div>
                 );
         }
     };
 
     useEffect(() => {
-        if (firstRender.current) {
-            firstRender.current = false;
-            return; 
-        }
-        if (hasMoreData) {
-            fetchSearchResults(page);
-        }
-    }, [page, searchbar, status, value, hasMoreData]);
+            if (firstRender.current) {
+                firstRender.current = false;
+                return;
+            }
+            if (hasMoreData) {
+                fetchSearchResults(page);
+            }
+    }, [page, initialLoadComplete, hasMoreData]);
+
+    useEffect(() => {
+        setSearchResults([]);
+        setPage(1);
+        setHasMoreData(true);
+        setInitialLoadComplete(!initialLoadComplete)
+    }, [searchbar, status, value]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -141,12 +155,6 @@ export const AdminTicketPage = () => {
         };
     }, []);
 
-    useEffect(() => {
-        setSearchResults([]);
-        setPage(1);
-        setHasMoreData(true);
-    }, [searchbar, status, value]);
-    
     return (
         <div className="flex items-center flex-col h-[calc(100%-4rem)]">
             <div className="xl:text-[5rem] text-[4rem] text-primary-base font-bold text-pri mt-10">
@@ -157,7 +165,7 @@ export const AdminTicketPage = () => {
                 <Searchbar setSearchbar={setSearchbar} />
                 <div className="flex flex-row justify-between w-full mt-4 gap-4">
                     <FilterStatus setStatus={setStatus} />
-                    <FilterTime value={value} setValue={setValue}/>
+                    <FilterTime value={value} setValue={setValue} />
                 </div>
             </div>
 
@@ -165,7 +173,7 @@ export const AdminTicketPage = () => {
                 <table className="w-full table-fixed">
                     <thead className="border-b-2 text-xs overflow-hidden not-italic font-semibold text-left">
                         <tr>
-                        <th className="py-3 px-4 sticky top-0 bg-white">หัวข้อ</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">หัวข้อ</th>
                             <th className="sticky top-0 bg-white">
                                 <div className='relative flex flex-row justify-between w-full'>
                                     <MyDropdown sorting={sorting} />
@@ -173,7 +181,7 @@ export const AdminTicketPage = () => {
                             </th>
                             <th className="py-3 px-4 sticky top-0 bg-white">หมวดหมู่</th>
                             <th className="py-3 px-4 sticky top-0 bg-white">ชนิดของคำ</th>
-                            <th className="py-3 px-4 sticky top-0 bg-white">รายระเอียด</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">รายละเอียด</th>
                             <th className="py-3 px-4 sticky top-0 bg-white">สถานะ</th>
                             <th onClick={sortingTime} className="py-3 px-4 cursor-pointer sticky top-0 bg-white">
                                 <div className='flex flex-row justify-between w-full'>

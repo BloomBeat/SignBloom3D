@@ -16,9 +16,9 @@ export default function FilterWordtype({ setWordtype }) {
 
   const handleChange = (wordType) => {
     setSelected(wordType);
-    if (setWordtype) {
-      setWordtype(wordType.category);
-    }
+      if (setWordtype) {
+        setWordtype(wordType.category);
+      }
   };
 
   const clearSelection = (event) => {

@@ -3,10 +3,11 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
 
 const statuses = [
-  { id: 1, name: 'Open'},
-  { id: 2, name: 'Closed'},
-  { id: 3, name: 'In Progress'},
-  { id: 4, name: 'On hold'},
+  { id: 1, name: 'Open', th: 'ได้รับคำร้อง'},
+  { id: 2, name: 'Closed', th: 'เเก้ไขคำร้องเสร็จสิ้น'},
+  { id: 3, name: 'In Progress', th: 'เเก้ไขคำร้อง'},
+  { id: 4, name: 'On hold', th: 'ตรวจสอบคำร้อง'},
+  { id: 5, name: 'Canceled', th: 'ปฎิเสธคำร้อง'},
 ];
 
 function FilterStatus({ setStatus }) {
@@ -14,10 +15,11 @@ function FilterStatus({ setStatus }) {
 
   const handleChange = (status) => {
     setSelected(status);
-    if (setStatus) {
-      setStatus(status.name.toLowerCase());
-    }
+      if (setStatus) {
+        setStatus(status.name.toLowerCase());
+      }
   };
+  
 
   const clearSelection = (event) => {
     event.stopPropagation();
@@ -33,7 +35,7 @@ function FilterStatus({ setStatus }) {
         <div className="relative mt-1">
           <Listbox.Button className="h-10 relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left border-2 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
             <span className="absolute flex justify-center px-1 text-xs bg-white top-0 translate-x-0 -translate-y-2 z-10 text-gray-500">สถานะคำร้อง</span>
-            <span className="block truncate">{selected ? selected.name : 'ไม่ได้ระบุ'}</span>
+            <span className="block truncate">{selected ? selected.th : 'ไม่ได้ระบุ'}</span>
             {selected && (
               <span onClick={clearSelection} className="absolute inset-y-0 right-6 flex items-center pr-2 cursor-pointer">
                 <XMarkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -61,7 +63,7 @@ function FilterStatus({ setStatus }) {
                   {({ selected }) => (
                     <>
                       <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                        {status.name}
+                        {status.th}
                       </span>
                       {selected ? (
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
