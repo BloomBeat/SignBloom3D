@@ -181,7 +181,7 @@ export const AdminTicketPage = () => {
                             </th>
                             <th className="py-3 px-4 sticky top-0 bg-white">หมวดหมู่</th>
                             <th className="py-3 px-4 sticky top-0 bg-white">ชนิดของคำ</th>
-                            <th className="py-3 px-4 sticky top-0 bg-white">รายระเอียด</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">รายละเอียด</th>
                             <th className="py-3 px-4 sticky top-0 bg-white">สถานะ</th>
                             <th onClick={sortingTime} className="py-3 px-4 cursor-pointer sticky top-0 bg-white">
                                 <div className='flex flex-row justify-between w-full'>
