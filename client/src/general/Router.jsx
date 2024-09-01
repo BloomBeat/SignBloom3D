@@ -13,6 +13,7 @@ import { Layout } from "./Layout.jsx";
 import Navbaruser from "../components/Navbaruser.jsx";
 import { Vocabulary } from "../pages/vocabulary/VocabularyPage.jsx";
 import { AdminTicketPage } from "../pages/admin/AdminTicketPage.jsx"
+import { Login } from "../pages/login/Login.jsx"
 // Will create all page below after get UI
 // import { Support } from "../pages/support/SupportPage.jsx";
 // import { AboutUs } from "../pages/aboutus/AboutUsPage.jsx";
@@ -89,7 +90,7 @@ export const Router = () => (
           <Register/>
         </Layout>
       }
-    />
+    /> */}
     <Route
       path="login" // localhost:5173/login
       element={
@@ -98,7 +99,7 @@ export const Router = () => (
           <Login/>
         </Layout>
       }
-    /> */}
+    />
   </Routes>
   </>
 );
