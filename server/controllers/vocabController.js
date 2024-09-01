@@ -153,3 +153,17 @@ export const searchVocab = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch suggestions" });
   }
 };
+
+export const addVocab = async (req, res) => {
+  try {
+    const { category_id, name, description, parts_of_speech, image, author } =
+      req.body;
+    const find = await Category.find({
+      _id: category_id,
+      "vocabularies.name": name,
+    });
+  } catch (err) {
+    console.error("Failed to add vocabulary:", err);
+    res.status(400).json({ error: "Failed to add vocabulary" });
+  }
+};
