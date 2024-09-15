@@ -2,14 +2,15 @@ import jwt from "jsonwebtoken";
 
 export const authenticateUser = (req, res, next) => {
   // Access the Authorization header
-  const authHeader = req.headers.authorization;
+  const authHeader = req.cookies;
 
   if (!authHeader) {
     return res.status(401).send("Unauthorized, No token");
   }
 
   // Extract the token from the "Bearer <token>" format
-  const token = authHeader.split(" ")[1];
+  // const token = authHeader.split(" ")[1];
+  const token = authHeader.token;
 
   if (!token) {
     return res.status(401).send("Unauthorized, No token");
@@ -25,7 +26,6 @@ export const authenticateUser = (req, res, next) => {
     if (decoded.exp < now) {
       return res.status(401).send("Token expired");
     }
-
     // Pass control to the next middleware or route handler
     next();
   } catch (error) {

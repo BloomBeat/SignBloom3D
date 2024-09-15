@@ -37,7 +37,8 @@ export const userLogin = async (req, res) => {
     }
   );
 
-  res.send({ token });
+  res.cookie("token", token, { maxAge: 30000, secure: true });
+  // res.send({ token });
 };
 
 export const userRegister = async (req, res) => {

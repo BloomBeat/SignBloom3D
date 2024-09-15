@@ -5,12 +5,14 @@ import { connectToDatabase } from "./configs/db.config.js";
 import userRouter from "./routes/user.js";
 import vocabRouter from "./routes/vocab.js";
 import ticketRouter from "./routes/ticket.js";
+import cookieParser from "cookie-parser";
 const app = express();
 
-app.use(cors());
 connectToDatabase();
-
+app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
+
 app.use("/api/user", userRouter);
 app.use("/api/vocab", vocabRouter);
 app.use("/api/ticket", ticketRouter);
