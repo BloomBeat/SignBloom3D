@@ -15,28 +15,23 @@ import jwt from "jsonwebtoken";
 
 export const userLogin = async (req, res) => {
   const { email, password } = req.body;
-
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(404).send("User not found");
   }
-
-  // Compare provided password with stored hash
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     return res.status(401).send("Invalid password");
   }
-
-  // Generate JWT token
   const token = jwt.sign(
     {
-      id: user._id, // Custom claim (user ID)
-      email: user.email, // Custom claim (email)
-      iss: process.env.JWT_ISSUER, // Issuer claim, e.g., your application domain
-      iat: Math.floor(Date.now() / 1000), // Issued At (current timestamp)
-      sub: user._id, // Subject claim (user's ID)
-      nbf: Math.floor(Date.now() / 1000), // Not Before (valid immediately)
-      admin: user.role === "admin" ? true : false,
+      id: user._id,
+      email: user.email,
+      iss: process.env.JWT_ISSUER,
+      iat: Math.floor(Date.now() / 1000),
+      sub: user._id,
+      nbf: Math.floor(Date.now() / 1000),
+      admin: user.role === "admin",
     },
     process.env.JWT_SECRET,
     { expiresIn: "3h" }
@@ -44,17 +39,14 @@ export const userLogin = async (req, res) => {
 
   return res
     .cookie("token", token, {
-      maxAge: 3600000, // 1 hour
-      secure: process.env.NODE_ENV === "production", // set to true in production
-      httpOnly: process.env.NODE_ENV === "production", // set to true in production
+      maxAge: 3 * 60 * 60 * 1000, // 3 hours
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      // signed: true,
-      signed: false, // wait for integration
+      signed: false, // Change this to true once you're ready
     })
     .status(200)
-    .send({ status: "Login successful", token: token });
-
-  // res.send({ token });
+    .send({ status: "Login successful", token });
 };
 
 export const userRegister = async (req, res) => {
@@ -73,8 +65,7 @@ export const userRegister = async (req, res) => {
       picture_profile,
       role,
     } = req.body;
-    console.log("Registering user with data:", req.body);
-    // Check if all required fields are provided
+
     if (
       !email ||
       !password ||
@@ -92,20 +83,14 @@ export const userRegister = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create new user
     const newUser = new User({
       email,
-      password: hashedPassword,
+      password, // This will be hashed via the pre-save hook
       firstname,
       lastname,
       age,
@@ -120,8 +105,6 @@ export const userRegister = async (req, res) => {
       updated_at: new Date(),
     });
 
-    console.log("New user to be saved:", newUser);
-    // Save user to database
     await newUser.save();
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
@@ -129,6 +112,5 @@ export const userRegister = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error registering user", error: error.message });
-    console.log("error is here:", error);
   }
 };
