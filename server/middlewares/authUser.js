@@ -1,32 +1,56 @@
 import jwt from "jsonwebtoken";
 
 export const authenticateUser = (req, res, next) => {
-  // Access the Authorization header
-  const authHeader = req.cookies;
+  // console.log("Cookies received:", req.signedCookies.token);
+  // const token = req.signedCookies.token;
 
-  if (!authHeader) {
-    return res.status(401).send("Unauthorized, No token");
-  }
-
-  // Extract the token from the "Bearer <token>" format
-  // const token = authHeader.split(" ")[1];
-  const token = authHeader.token;
+  const token = req.cookies.token;
 
   if (!token) {
     return res.status(401).send("Unauthorized, No token");
   }
 
   try {
-    // Verify the token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = { id: decoded.id, email: decoded.email };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      issuer: process.env.JWT_ISSUER,
+    });
 
-    // Check if the token is expired
+    req.user = {
+      id: decoded.id,
+      email: decoded.email,
+      admin: decoded.admin, // Add the admin claim to the request
+    };
+
     const now = Math.floor(Date.now() / 1000);
     if (decoded.exp < now) {
       return res.status(401).send("Token expired");
     }
-    // Pass control to the next middleware or route handler
+    next();
+  } catch (error) {
+    return res
+      .status(401)
+      .send({ message: "unauthenticated", error: error.message });
+  }
+};
+
+export const authenticateAdmin = (req, res, next) => {
+  const token = req.signedCookies.token;
+  if (!token) {
+    return res.status(401).send("Unauthorized, No token");
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      issuer: process.env.JWT_ISSUER,
+    });
+    req.user = { id: decoded.id, email: decoded.email };
+    const now = Math.floor(Date.now() / 1000);
+    if (decoded.exp < now) {
+      return res.status(401).send("Token expired");
+    }
+    if (decoded.role !== "admin") {
+      return res.status(403).send("Unauthorized, not admin");
+    }
     next();
   } catch (error) {
     return res

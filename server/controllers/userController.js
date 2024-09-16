@@ -29,15 +29,31 @@ export const userLogin = async (req, res) => {
 
   // Generate JWT token
   const token = jwt.sign(
-    //{ id: decoded.userID, email: user.email },
-    { id: user._id, email: user.email }, //GPT changes
-    process.env.JWT_SECRET,
     {
-      expiresIn: "1h",
-    }
+      id: user._id, // Custom claim (user ID)
+      email: user.email, // Custom claim (email)
+      iss: process.env.JWT_ISSUER, // Issuer claim, e.g., your application domain
+      iat: Math.floor(Date.now() / 1000), // Issued At (current timestamp)
+      sub: user._id, // Subject claim (user's ID)
+      nbf: Math.floor(Date.now() / 1000), // Not Before (valid immediately)
+      admin: user.role === "admin" ? true : false,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "3h" }
   );
 
-  res.cookie("token", token, { maxAge: 30000, secure: true });
+  return res
+    .cookie("token", token, {
+      maxAge: 3600000, // 1 hour
+      secure: process.env.NODE_ENV === "production", // set to true in production
+      httpOnly: process.env.NODE_ENV === "production", // set to true in production
+      sameSite: "strict",
+      // signed: true,
+      signed: false, // wait for integration
+    })
+    .status(200)
+    .send({ status: "Login successful", token: token });
+
   // res.send({ token });
 };
 
