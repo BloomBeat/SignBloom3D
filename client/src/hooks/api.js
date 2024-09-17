@@ -8,6 +8,7 @@ const api = axios.create({
   timeout: 5000, // Increase timeout to give more room for slow connections
   headers: {
     "Content-Type": "application/json", // Adjust the content type as needed
+    
     // Add any other default headers here
   },
 });

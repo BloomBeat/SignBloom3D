@@ -16,9 +16,9 @@ export default function FilterWordtype({ setWordtype }) {
 
   const handleChange = (wordType) => {
     setSelected(wordType);
-    if (setWordtype) {
-      setWordtype(wordType.category);
-    }
+      if (setWordtype) {
+        setWordtype(wordType.category);
+      }
   };
 
   const clearSelection = (event) => {
@@ -30,7 +30,7 @@ export default function FilterWordtype({ setWordtype }) {
   };
 
   return (
-    <div className="w-1/2">
+    <div className="w-full">
       <Listbox value={selected} onChange={handleChange}>
         <div className="relative mt-1">
           <Listbox.Button className="h-10 relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left border-2 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">

@@ -1,23 +1,26 @@
 import { Fragment, useState, useEffect } from 'react';
-import axios from 'axios';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import axios from 'axios';
 
 function FilterCategory({ setCategory }) {
   const [searchResults, setSearchResults] = useState([]);
+  const [filteredResults, setFilteredResults] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (category) => {
     setSelected(category);
-    if (setCategory) {
-      setCategory(category);
-    }
+      if (setCategory) {
+        setCategory(category);
+      }
   };
 
   const clearSelection = (event) => {
     event.stopPropagation();
     setSelected(null);
+    setQuery('');
     if (setCategory) {
       setCategory(null);
     }
@@ -27,12 +30,25 @@ function FilterCategory({ setCategory }) {
     fetchSearchResults();
   }, []);
 
+  useEffect(() => {
+    if (query === '') {
+      setFilteredResults(searchResults);
+    } else {
+      setFilteredResults(
+        searchResults.filter((item) =>
+          item.toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    }
+  }, [query, searchResults]);
+
   const fetchSearchResults = async () => {
     setLoading(true);
     try {
       const response = await axios.get('http://localhost:3000/api/vocab/category');
       const results = Array.isArray(response.data) ? response.data : [];
       setSearchResults(results);
+      setFilteredResults(results);
     } catch (error) {
       console.error('Error fetching search results:', error);
     } finally {
@@ -41,7 +57,7 @@ function FilterCategory({ setCategory }) {
   };
 
   return (
-    <div className="w-1/2">
+    <div className="w-full">
       <Listbox value={selected} onChange={handleChange}>
         <div className="relative mt-1">
           <Listbox.Button className="h-10 relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left border-2 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
@@ -67,23 +83,32 @@ function FilterCategory({ setCategory }) {
             leaveTo="opacity-0"
           >
             <Listbox.Options className="z-10 absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+              <div className="relative px-3 py-2">
+                <input
+                  type="text"
+                  value={query}
+                  className="w-full bg-white rounded-md border-2 border-gray-300 pl-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                  placeholder="ค้นหา..."
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+              </div>
               {loading ? (
                 <div className="py-2 px-4 text-gray-500">Loading...</div>
-              ) : searchResults.length === 0 ? (
+              ) : filteredResults.length === 0 ? (
                 <div className="py-2 px-4 text-gray-500">No results found</div>
               ) : (
-                searchResults.map((item, idx) => (
+                filteredResults.map((item, idx) => (
                   <Listbox.Option
                     key={idx}
                     className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'}`
+                      `relative cursor-default py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'}`
                     }
-                    value={item.category}
-                  >
+                    value={item}
+                  > 
                     {({ selected }) => (
                       <>
                         <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                          {item.category}
+                          {item}
                         </span>
                         {selected && (
                           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
