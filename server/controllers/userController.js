@@ -102,3 +102,28 @@ export const userRegister = async (req, res) => {
       .json({ message: "Error registering user", error: error.message });
   }
 };
+
+/**
+ * Handles user logout by clearing the authentication cookie.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object to send back to the client.
+ *
+ * @returns {Object} - The response object indicating logout success.
+ */
+
+export const userLogout = async (req, res) => {
+  try {
+    res.clearCookie("SessionID", {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      signed: true,
+    });
+    return res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Logout failed", error: error.message });
+  }
+};

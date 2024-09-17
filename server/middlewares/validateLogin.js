@@ -10,6 +10,7 @@
  * @throws Will send a response with status 400 and an error message if any validation fails.
  * validaateLogin(req, res, next);
  */
+
 const validateLogin = (req, res, next) => {
   //now still not pass validate
   const { email, password } = req.body; //check that used username/email !!!

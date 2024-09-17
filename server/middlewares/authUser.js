@@ -1,11 +1,8 @@
 import jwt from "jsonwebtoken";
 
-export const authenticateUser = (req, res, next) => {
-  // console.log("Cookies received:", req.signedCookies.token);
-  // const token = req.signedCookies.token;
-
+export const authenticateUser = async (req, res, next) => {
   try {
-    console.log("Authentication token received", req.signedCookies);
+    // console.log("Authentication token received", req.signedCookies);
     const token = req.signedCookies.SessionID;
 
     if (!token) {
