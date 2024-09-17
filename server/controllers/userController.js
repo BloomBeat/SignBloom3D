@@ -24,7 +24,7 @@ export const userLogin = async (req, res) => {
   }
   const token = user.generateAccessJWT();
   const options = {
-    maxAge: 3 * 60 * 60 * 1000, // 3 hours
+    maxAge: 86400000, // 3 hours
     secure: process.env.NODE_ENV === "production",
     httpOnly: process.env.NODE_ENV === "production",
     sameSite: "lax",
