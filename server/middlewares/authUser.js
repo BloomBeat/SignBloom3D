@@ -4,13 +4,14 @@ export const authenticateUser = (req, res, next) => {
   // console.log("Cookies received:", req.signedCookies.token);
   // const token = req.signedCookies.token;
 
-  const token = req.cookies.token;
-
-  if (!token) {
-    return res.status(401).send("Unauthorized, No token");
-  }
-
   try {
+    console.log("Authentication token received", req.signedCookies);
+    const token = req.signedCookies.SessionID;
+
+    if (!token) {
+      return res.status(401).send("Unauthorized, No token");
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
       issuer: process.env.JWT_ISSUER,
     });

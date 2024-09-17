@@ -1,6 +1,5 @@
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 /**
 ​ * Handles user login by verifying email and password, and generating a JWT token.
@@ -23,30 +22,19 @@ export const userLogin = async (req, res) => {
   if (!isPasswordValid) {
     return res.status(401).send("Invalid password");
   }
-  const token = jwt.sign(
-    {
-      id: user._id,
-      email: user.email,
-      iss: process.env.JWT_ISSUER,
-      iat: Math.floor(Date.now() / 1000),
-      sub: user._id,
-      nbf: Math.floor(Date.now() / 1000),
-      admin: user.role === "admin",
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: "3h" }
-  );
-
+  const token = user.generateAccessJWT();
+  const options = {
+    maxAge: 3 * 60 * 60 * 1000, // 3 hours
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    signed: true, // Change this to true once you're ready
+    // domain: process.env.NODE_ENV === "production" ? domain : localhost,
+  };
   return res
-    .cookie("token", token, {
-      maxAge: 3 * 60 * 60 * 1000, // 3 hours
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      signed: false, // Change this to true once you're ready
-    })
+    .cookie("SessionID", token, options)
     .status(200)
-    .send({ status: "Login successful", token });
+    .send({ status: "Login successful" });
 };
 
 export const userRegister = async (req, res) => {
