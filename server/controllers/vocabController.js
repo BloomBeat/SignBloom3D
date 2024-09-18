@@ -162,6 +162,46 @@ export const addVocab = async (req, res) => {
       _id: category_id,
       "vocabularies.name": name,
     });
+    if (find.length > 0) {
+      return res.status(400).json({ error: "Vocabulary already exists" });
+    }
+    const newVocab = {
+      name,
+      description,
+      parts_of_speech: parts_of_speech || "",
+      image: image || "vocab_placeholder",
+      author,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+    const updatedCategory = await Category.findByIdAndUpdate(
+      category_id,
+      {
+        $push: {
+          vocabularies: newVocab,
+        },
+      },
+      { new: true }
+    );
+
+    // Find the newly added vocabulary
+    const addedVocab = updatedCategory.vocabularies.find(
+      (v) => v.name === name
+    );
+
+    // Format the response
+    const formattedVocab = {
+      _id: addedVocab._id.toString(),
+      name: addedVocab.name,
+      description: addedVocab.description,
+      parts_of_speech: addedVocab.parts_of_speech,
+      created_at: addedVocab.created_at.toISOString(),
+      updated_at: addedVocab.updated_at.toISOString(),
+      image: addedVocab.image,
+      author: addedVocab.author,
+    };
+
+    res.status(200).json(formattedVocab);
   } catch (err) {
     console.error("Failed to add vocabulary:", err);
     res.status(400).json({ error: "Failed to add vocabulary" });
