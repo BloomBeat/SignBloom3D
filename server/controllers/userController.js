@@ -127,3 +127,16 @@ export const userLogout = async (req, res) => {
       .json({ message: "Logout failed", error: error.message });
   }
 };
+
+export const checkUserLogin = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "กรุณาเข้าสู่ระบบก่อน" });
+    }
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error("Error checking user login:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
