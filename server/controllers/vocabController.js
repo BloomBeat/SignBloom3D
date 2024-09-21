@@ -1,4 +1,5 @@
 import Category from "../models/category.js";
+import mongoose from "mongoose";
 
 export const vocabSuggestions = async (req, res) => {
   try {
@@ -71,31 +72,51 @@ export const vocabSuggestions = async (req, res) => {
 export const displayVocab = async (req, res) => {
   try {
     const { id } = req.params;
+    const vocabId = mongoose.Types.ObjectId.createFromHexString(id);
+    const pipeline = [
+      { $unwind: "$vocabularies" },
+      { $match: { "vocabularies._id": vocabId } },
+      {
+        $lookup: {
+          from: "tickets",
+          localField: "vocabularies._id",
+          foreignField: "vocabulary_id",
+          as: "tickets",
+        },
+      },
+      {
+        $facet: {
+          vocabDetails: [
+            {
+              $project: {
+                _id: 0,
+                name: "$vocabularies.name",
+                description: "$vocabularies.description",
+                parts_of_speech: "$vocabularies.parts_of_speech",
+                author: "$vocabularies.author",
+                updated_at: "$vocabularies.updated_at",
+                ticket_status: {
+                  $cond: {
+                    if: { $gt: [{ $size: "$tickets" }, 0] }, // Check if there are tickets
+                    then: { $arrayElemAt: ["$tickets.status", 0] }, // Get the first matching ticket's status
+                    else: null, // If no tickets, return null
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    ];
 
-    // Find the category containing the vocabulary with the specified ID
-    const category = await Category.findOne(
-      { "vocabularies._id": id },
-      { "vocabularies.$": 1 }
-    );
+    const result = await Category.aggregate(pipeline).exec();
 
-    if (!category) {
+    if (result.length === 0 || result[0].vocabDetails.length === 0) {
       return res.status(404).json({ error: "Word not found" });
     }
 
-    // Extract the vocabulary item from the category
-    const vocab = category.vocabularies[0];
-
-    // Send the vocabulary item as the response
-    res.status(200).json({
-      _id: vocab._id,
-      name: vocab.name,
-      description: vocab.description,
-      parts_of_speech: vocab.parts_of_speech,
-      image: vocab.image,
-      author: vocab.author,
-      created_at: vocab.created_at,
-      updated_at: vocab.updated_at,
-    });
+    const vocab = result[0].vocabDetails[0];
+    res.status(200).json(vocab);
   } catch (err) {
     console.error("Failed to fetch word:", err);
     res.status(500).json({ error: "Failed to fetch word" });
