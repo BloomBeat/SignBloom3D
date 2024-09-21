@@ -72,7 +72,6 @@ export const vocabSuggestions = async (req, res) => {
 export const displayVocab = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(typeof id);
     const vocabId = mongoose.Types.ObjectId.createFromHexString(id);
     const pipeline = [
       { $unwind: "$vocabularies" },
