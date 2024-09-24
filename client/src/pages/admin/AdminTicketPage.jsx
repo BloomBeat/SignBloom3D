@@ -4,7 +4,7 @@ import FilterStatus from "./components/FilterStatus";
 import FilterTime from "./components/FilterTime";
 import { ArrowsUpDownIcon } from "@heroicons/react/20/solid";
 import MyDropdown from "../vocabulary/_components/Dropdown";
-import axios from 'axios';
+import api from "../../hooks/api"
 
 export const AdminTicketPage = () => {
     const [searchResults, setSearchResults] = useState([]);
@@ -56,7 +56,7 @@ export const AdminTicketPage = () => {
         setLoading(true);
         try {
             const period = formatPeriod(value);
-            const response = await axios.get('/api/ticket', {
+            const response = await api.get('ticket', {
                 params: {
                     find: searchbar || '',
                     status: status || '',
@@ -181,7 +181,7 @@ export const AdminTicketPage = () => {
                             </th>
                             <th className="py-3 px-4 sticky top-0 bg-white">หมวดหมู่</th>
                             <th className="py-3 px-4 sticky top-0 bg-white">ชนิดของคำ</th>
-                            <th className="py-3 px-4 sticky top-0 bg-white">รายละเอียด</th>
+                            <th className="py-3 px-4 sticky top-0 bg-white">รายล    ะเอียด</th>
                             <th className="py-3 px-4 sticky top-0 bg-white">สถานะ</th>
                             <th onClick={sortingTime} className="py-3 px-4 cursor-pointer sticky top-0 bg-white">
                                 <div className='flex flex-row justify-between w-full'>

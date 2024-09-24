@@ -1,7 +1,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Combobox } from '@headlessui/react';
 import { CheckIcon } from '@heroicons/react/20/solid';
-import axios from 'axios';
+import api from "../../../hooks/api"
 
 function SearchBarAdmin() {
   const [searchResults, setSearchResults] = useState([]); // hold search results
@@ -12,7 +12,7 @@ function SearchBarAdmin() {
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/vocab', {
+        const response = await api.get('/vocab', {
           params: {
             find: 'ตา',
             category: 'ร่างกายภายนอก',

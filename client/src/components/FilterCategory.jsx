@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import axios from 'axios';
+import api from "../hooks/api"
 
 function FilterCategory({ setCategory }) {
   const [searchResults, setSearchResults] = useState([]);
@@ -45,7 +45,7 @@ function FilterCategory({ setCategory }) {
   const fetchSearchResults = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:3000/api/vocab/category');
+      const response = await api.get('vocab/category');
       const results = Array.isArray(response.data) ? response.data : [];
       setSearchResults(results);
       setFilteredResults(results);

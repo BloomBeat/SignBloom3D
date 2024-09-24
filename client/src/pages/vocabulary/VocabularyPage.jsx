@@ -4,7 +4,7 @@ import FilterCategory from "../../components/FilterCategory";
 import FilterWordtype from "../../components/FilterWordtype";
 import { ArrowsUpDownIcon } from "@heroicons/react/20/solid";
 import MyDropdown from "./_components/Dropdown.jsx";
-import axios from 'axios';
+import api from "../../hooks/api.js";
 
 export const Vocabulary = () => {
     const [searchResults, setSearchResults] = useState([]);
@@ -49,7 +49,7 @@ export const Vocabulary = () => {
         if (loading) return;
         setLoading(true);
         try {
-            const response = await axios.get('/api/vocab', {
+            const response = await api.get('/vocab', {
                 params: {
                     find: searchbar || '',
                     category: category || '',

@@ -1,6 +1,5 @@
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 /**
 ​ * Handles user login by verifying email and password, and generating a JWT token.
@@ -15,29 +14,27 @@ import jwt from "jsonwebtoken";
 
 export const userLogin = async (req, res) => {
   const { email, password } = req.body;
-
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(404).send("User not found");
   }
-
-  // Compare provided password with stored hash
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     return res.status(401).send("Invalid password");
   }
-
-  // Generate JWT token
-  const token = jwt.sign(
-    //{ id: decoded.userID, email: user.email },
-    { id: user._id, email: user.email }, //GPT changes
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "1h",
-    }
-  );
-
-  res.send({ token });
+  const token = user.generateAccessJWT();
+  const options = {
+    maxAge: 86400000, // 3 hours
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    signed: true, // Change this to true once you're ready
+    // domain: process.env.NODE_ENV === "production" ? domain : localhost,
+  };
+  return res
+    .cookie("SessionID", token, options)
+    .status(200)
+    .send({ status: "Login successful" });
 };
 
 export const userRegister = async (req, res) => {
@@ -56,8 +53,7 @@ export const userRegister = async (req, res) => {
       picture_profile,
       role,
     } = req.body;
-    console.log("Registering user with data:", req.body);
-    // Check if all required fields are provided
+
     if (
       !email ||
       !password ||
@@ -75,20 +71,14 @@ export const userRegister = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create new user
     const newUser = new User({
       email,
-      password: hashedPassword,
+      password, // This will be hashed via the pre-save hook
       firstname,
       lastname,
       age,
@@ -103,8 +93,6 @@ export const userRegister = async (req, res) => {
       updated_at: new Date(),
     });
 
-    console.log("New user to be saved:", newUser);
-    // Save user to database
     await newUser.save();
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
@@ -112,6 +100,30 @@ export const userRegister = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error registering user", error: error.message });
-    console.log("error is here:", error);
+  }
+};
+
+/**
+ * Handles user logout by clearing the authentication cookie.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object to send back to the client.
+ *
+ * @returns {Object} - The response object indicating logout success.
+ */
+
+export const userLogout = async (req, res) => {
+  try {
+    res.clearCookie("SessionID", {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      signed: true,
+    });
+    return res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Logout failed", error: error.message });
   }
 };
