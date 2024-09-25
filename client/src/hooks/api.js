@@ -4,7 +4,7 @@ const api = axios.create({
   baseURL:
     process.env.NODE_ENV === "production"
       ? "https://your-production-domain.com/api/" // Production URL
-      : "http://localhost:5173/api/", // Development URL (points to your Express server)
+      : "http://localhost:3000/api/", // Development URL (points to your Express server)
   timeout: 5000, // Increase timeout to give more room for slow connections
   headers: {
     "Content-Type": "application/json", // Adjust the content type as needed
