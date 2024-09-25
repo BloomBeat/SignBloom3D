@@ -89,8 +89,8 @@ export const vocabSuggestions = async (req, res) => {
 export const displayVocab = async (req, res) => {
   try {
     const { id } = req.params;
-    const vocabId = mongoose.Types.ObjectId(id); // Convert the id to ObjectId
-
+    const vocabId = mongoose.Types.ObjectId.createFromHexString(id); // Convert the id to ObjectId
+    console.log(vocabId);
     const pipeline = [
       { $match: { _id: vocabId } }, // Find the specific vocabulary by id
       {
@@ -116,7 +116,7 @@ export const displayVocab = async (req, res) => {
           parts_of_speech: 1,
           author: 1,
           updated_at: 1,
-          category: 1,
+          category: { $arrayElemAt: ["$category.category", 0] },
           ticket_status: {
             $cond: {
               if: { $gt: [{ $size: "$tickets" }, 0] }, // Check if there are tickets
@@ -129,11 +129,9 @@ export const displayVocab = async (req, res) => {
     ];
 
     const result = await Vocabulary.aggregate(pipeline).exec();
-
     if (result.length === 0) {
       return res.status(404).json({ error: "Word not found" });
     }
-
     const vocab = result[0];
     res.status(200).json(vocab);
   } catch (err) {
@@ -160,26 +158,59 @@ export const searchVocab = async (req, res) => {
     const find = req.query.find;
     const regex = find ? new RegExp(`^${find}`, "i") : null;
 
+    // const pipeline = [
+    //   {
+    //     $unwind: "$vocabularies",
+    //   },
+    //   {
+    //     $match: {
+    //       "vocabularies.name": { $regex: regex },
+    //     },
+    //   },
+    //   {
+    //     $group: {
+    //       _id: "$category",
+    //       vocab: { $first: "$vocabularies" },
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       _id: "$vocab._id", // Include the _id of the vocabulary
+    //       name: "$vocab.name", // Include the name of the vocabulary
+    //       category: "$_id", // Include the category
+    //     },
+    //   },
+    //   {
+    //     $limit: 6,
+    //   },
+    // ];
+
     const pipeline = [
       {
-        $unwind: "$vocabularies",
-      },
-      {
         $match: {
-          "vocabularies.name": { $regex: regex },
-        },
-      },
-      {
-        $group: {
-          _id: "$category",
-          vocab: { $first: "$vocabularies" },
+          name: { $regex: regex },
         },
       },
       {
         $project: {
-          _id: "$vocab._id", // Include the _id of the vocabulary
-          name: "$vocab.name", // Include the name of the vocabulary
-          category: "$_id", // Include the category
+          _id: 1,
+          name: 1,
+          category_id: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          category: { $arrayElemAt: ["$category.category", 0] },
         },
       },
       {
@@ -187,7 +218,7 @@ export const searchVocab = async (req, res) => {
       },
     ];
 
-    const categories = await Category.aggregate(pipeline);
+    const categories = await Vocabulary.aggregate(pipeline);
     res.status(200).json(categories);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch suggestions" });
