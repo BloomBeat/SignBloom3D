@@ -18,62 +18,18 @@ export const vocabSuggestions = async (req, res) => {
     const regex = find ? new RegExp(`^${find}`, "i") : null;
     const skip = (page - 1) * limit;
 
-    // const matchCriteria = {};
-    // if (category) matchCriteria.category = category;
-    // if (regex) matchCriteria["vocabularies.name"] = { $regex: regex };
-    // if (parts_of_speech)
-    //   matchCriteria["vocabularies.parts_of_speech"] = parts_of_speech;
-    // if (author) matchCriteria["vocabularies.author"] = author;
-
-    // const pipeline = [
-    //   { $unwind: "$vocabularies" },
-    //   { $sort: { "vocabularies.updated_at": sortOrder === "asc" ? 1 : -1 } },
-    //   { $match: matchCriteria },
-    //   {
-    //     $facet: {
-    //       suggestions: [
-    //         ...(sortAlphabet ? [{ $sort: { "vocabularies.name": 1 } }] : []),
-    //         { $skip: skip },
-    //         { $limit: Number(limit) },
-    //         {
-    //           $project: {
-    //             // _id: 0, // Uncomment this line if _id needs to be excluded
-    //             name: "$vocabularies.name",
-    //             category: "$category",
-    //             parts_of_speech: "$vocabularies.parts_of_speech",
-    //             description: "$vocabularies.description",
-    //             author: "$vocabularies.author",
-    //             updated_at: "$vocabularies.updated_at",
-    //           },
-    //         },
-    //       ],
-    //       totalResults: [{ $count: "total" }],
-    //     },
-    //   },
-    // ];
-
     const matchCriteria = {
-      ...(category
-        ? {
-            category_id: new mongoose.Types.ObjectId.createFromHexString(
-              category
-            ),
-          }
-        : {}),
       ...(regex ? { name: { $regex: regex } } : {}),
       ...(parts_of_speech ? { parts_of_speech: parts_of_speech } : {}),
       ...(author ? { author } : {}),
     };
 
     const pipeline = [
-      { $match: matchCriteria }, // Filter the documents
-      { $sort: { updated_at: sortOrder === "asc" ? 1 : -1 } }, // Sort the documents
       {
-        $facet: {
-          suggestions: [
-            ...(sortAlphabet ? [{ $sort: { name: 1 } }] : []),
-            { $skip: skip }, // Skip the first n documents
-            { $limit: Number(limit) }, // Limit the number of documents
+        $match: matchCriteria, // Initial filter for name, parts_of_speech, and author
+      },
+      ...(category
+        ? [
             {
               $lookup: {
                 from: "categories",
@@ -83,17 +39,31 @@ export const vocabSuggestions = async (req, res) => {
               },
             },
             {
+              $match: {
+                "category.category": category, // Filter by category after lookup
+              },
+            },
+          ]
+        : []),
+      { $sort: { updated_at: sortOrder === "asc" ? 1 : -1 } }, // Sort the documents
+      {
+        $facet: {
+          suggestions: [
+            ...(sortAlphabet ? [{ $sort: { name: 1 } }] : []), // Optional sorting by name
+            { $skip: skip }, // Skip the first n documents
+            { $limit: Number(limit) }, // Limit the number of documents
+            {
               $project: {
                 name: 1,
                 description: 1,
                 parts_of_speech: 1,
                 author: 1,
                 updated_at: 1,
-                category: { $arrayElemAt: ["$category.category", 0] },
+                category: { $arrayElemAt: ["$category.category", 0] }, // Get the category name
               },
             },
           ],
-          totalResults: [{ $count: "total" }],
+          totalResults: [{ $count: "total" }], // Count total results
         },
       },
     ];
