@@ -223,37 +223,4 @@ export const searchVocab = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch suggestions" });
   }
-export const addVocab = async (req, res) => {
-  try {
-    const { name, description, parts_of_speech, author, category } = req.body;
-
-    // Check if the vocabulary already exists
-    const existingVocab = await Vocabulary.findOne({ name, author });
-    if (existingVocab) {
-      return res.status(400).json({ error: "Vocabulary already exists" });
-    }
-
-    // Find the category ID
-    const categoryDoc = await Category.findOne({ category });
-    if (!categoryDoc) {
-      return res.status(400).json({ error: "Invalid category" });
-    }
-
-    // Create new vocabulary
-    const newVocab = new Vocabulary({
-      name,
-      description,
-      parts_of_speech,
-      author,
-      category_id: categoryDoc._id,
-    });
-
-    // Save the new vocabulary to the database
-    await newVocab.save();
-
-    res.status(201).json({ message: "Vocabulary added successfully", vocab: newVocab });
-  } catch (err) {
-    console.error("Failed to add vocabulary:", err);
-    res.status(500).json({ error: "Failed to add vocabulary" });
-  }
 };
