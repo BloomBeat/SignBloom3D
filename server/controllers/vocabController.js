@@ -26,8 +26,9 @@ export const vocabSuggestions = async (req, res) => {
 
     const pipeline = [
       {
-        $match: matchCriteria, // Initial filter for name, parts_of_speech, and author
+        $match: matchCriteria,
       },
+      // Join with categories collection and filter by category if provided
       ...(category
         ? [
             {
@@ -40,18 +41,18 @@ export const vocabSuggestions = async (req, res) => {
             },
             {
               $match: {
-                "category.category": category, // Filter by category after lookup
+                "category.category": category,
               },
             },
           ]
         : []),
-      { $sort: { updated_at: sortOrder === "asc" ? 1 : -1 } }, // Sort the documents
+      { $sort: { updated_at: sortOrder === "asc" ? 1 : -1 } },
       {
         $facet: {
           suggestions: [
-            ...(sortAlphabet ? [{ $sort: { name: 1 } }] : []), // Optional sorting by name
-            { $skip: skip }, // Skip the first n documents
-            { $limit: Number(limit) }, // Limit the number of documents
+            ...(sortAlphabet ? [{ $sort: { name: 1 } }] : []),
+            { $skip: skip },
+            { $limit: Number(limit) },
             {
               $project: {
                 name: 1,
@@ -59,11 +60,11 @@ export const vocabSuggestions = async (req, res) => {
                 parts_of_speech: 1,
                 author: 1,
                 updated_at: 1,
-                category: { $arrayElemAt: ["$category.category", 0] }, // Get the category name
+                category: { $arrayElemAt: ["$category.category", 0] },
               },
             },
           ],
-          totalResults: [{ $count: "total" }], // Count total results
+          totalResults: [{ $count: "total" }],
         },
       },
     ];
@@ -89,10 +90,11 @@ export const vocabSuggestions = async (req, res) => {
 export const displayVocab = async (req, res) => {
   try {
     const { id } = req.params;
-    const vocabId = mongoose.Types.ObjectId.createFromHexString(id); // Convert the id to ObjectId
+    const vocabId = mongoose.Types.ObjectId.createFromHexString(id);
     console.log(vocabId);
     const pipeline = [
-      { $match: { _id: vocabId } }, // Find the specific vocabulary by id
+      { $match: { _id: vocabId } },
+      // Join with categories collection to get the category name
       {
         $lookup: {
           from: "categories",
@@ -101,10 +103,11 @@ export const displayVocab = async (req, res) => {
           as: "category",
         },
       },
+      // Join with tickets collection to get the status of the ticket
       {
         $lookup: {
-          from: "tickets", // Lookup in the 'tickets' collection
-          localField: "_id", // Match vocabulary id with ticket's vocabulary_id
+          from: "tickets",
+          localField: "_id",
           foreignField: "vocabulary_id",
           as: "tickets",
         },
@@ -119,8 +122,8 @@ export const displayVocab = async (req, res) => {
           category: { $arrayElemAt: ["$category.category", 0] },
           ticket_status: {
             $cond: {
-              if: { $gt: [{ $size: "$tickets" }, 0] }, // Check if there are tickets
-              then: { $arrayElemAt: ["$tickets.status", 0] }, // Get the first ticket's status
+              if: { $gt: [{ $size: "$tickets" }, 0] },
+              then: { $arrayElemAt: ["$tickets.status", 0] },
               else: null, // If no tickets, return null
             },
           },
@@ -142,10 +145,8 @@ export const displayVocab = async (req, res) => {
 
 export const getCategories = async (req, res) => {
   try {
-    const categories = await Category.find({}, { _id: 0, category: 1 }).lean();
-    // Map the result to return an array of strings
+    const categories = await Category.find({}, { category: 1 }).lean();
     const categoryList = categories.map((cat) => cat.category);
-
     res.status(200).json(categoryList);
   } catch (err) {
     console.error("Failed to fetch categories:", err);
@@ -157,34 +158,6 @@ export const searchVocab = async (req, res) => {
   try {
     const find = req.query.find;
     const regex = find ? new RegExp(`^${find}`, "i") : null;
-
-    // const pipeline = [
-    //   {
-    //     $unwind: "$vocabularies",
-    //   },
-    //   {
-    //     $match: {
-    //       "vocabularies.name": { $regex: regex },
-    //     },
-    //   },
-    //   {
-    //     $group: {
-    //       _id: "$category",
-    //       vocab: { $first: "$vocabularies" },
-    //     },
-    //   },
-    //   {
-    //     $project: {
-    //       _id: "$vocab._id", // Include the _id of the vocabulary
-    //       name: "$vocab.name", // Include the name of the vocabulary
-    //       category: "$_id", // Include the category
-    //     },
-    //   },
-    //   {
-    //     $limit: 6,
-    //   },
-    // ];
-
     const pipeline = [
       {
         $match: {
@@ -198,6 +171,7 @@ export const searchVocab = async (req, res) => {
           category_id: 1,
         },
       },
+      // Join with categories collection to get the category name
       {
         $lookup: {
           from: "categories",
