@@ -13,6 +13,7 @@ import { Layout } from "./Layout.jsx";
 import Navbaruser from "../components/Navbaruser.jsx";
 import { Vocabulary } from "../pages/vocabulary/VocabularyPage.jsx";
 import { AdminTicketPage } from "../pages/admin/AdminTicketPage.jsx"
+import DisplayVocab from "../pages/displayvocab/DisplayvocabPage.jsx";
 // Will create all page below after get UI
 // import { Support } from "../pages/support/SupportPage.jsx";
 // import { AboutUs } from "../pages/aboutus/AboutUsPage.jsx";
@@ -41,6 +42,17 @@ export const Router = () => (
         <Layout>
           <Navbaruser/>
           <AdminTicketPage/>
+        </Layout>
+      }
+    />
+    <Route
+      //
+      path={RoutePaths.DISPLAYVOCAB} // URL to the home page
+      element={
+        // What will be rendered
+        <Layout>
+          <Navbaruser/>
+          <DisplayVocab/>
         </Layout>
       }
     />

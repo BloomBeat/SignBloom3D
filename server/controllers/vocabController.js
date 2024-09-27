@@ -3,7 +3,7 @@ import Category from "../models/category.js";
 export const vocabSuggestions = async (req, res) => {
   try {
     const {
-      find,
+      find:findEncrypt,
       category,
       parts_of_speech,
       author,
@@ -12,7 +12,7 @@ export const vocabSuggestions = async (req, res) => {
       sortOrder = "desc",
       sortAlphabet = false,
     } = req.query;
-
+    const find = decodeURIComponent(findEncrypt)
     const regex = find ? new RegExp(`^${find}`, "i") : null;
     const skip = (page - 1) * limit;
 
@@ -70,8 +70,8 @@ export const vocabSuggestions = async (req, res) => {
 
 export const displayVocab = async (req, res) => {
   try {
-    const { id } = req.params;
-
+    const { id:idParams } = req.params;
+    const id = decodeURIComponent(idParams);
     // Find the category containing the vocabulary with the specified ID
     const category = await Category.findOne(
       { "vocabularies._id": id },

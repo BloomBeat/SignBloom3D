@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react"; //manage state, side effect, memorized callback
 import {debounce} from 'lodash'; //delays
 import SearchBar from '../../components/Searchbar';
-import CustomBtn from '../../components/Botton';
+import CustomBtn from '../../components/Button';
 
 export const HomePage = () => { //define function HomPage
   const [searchResults, setSearchResults] = useState([]); 
@@ -25,7 +25,6 @@ export const HomePage = () => { //define function HomPage
   
   useEffect(() => {
       fetchSearchResults(query);
-      console.log
   }, [query]);
 
   // Filter the search results based on the query

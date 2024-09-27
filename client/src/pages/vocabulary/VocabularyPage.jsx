@@ -5,6 +5,7 @@ import FilterWordtype from "../../components/FilterWordtype";
 import { ArrowsUpDownIcon } from "@heroicons/react/20/solid";
 import MyDropdown from "./_components/Dropdown.jsx";
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 export const Vocabulary = () => {
     const [searchResults, setSearchResults] = useState([]);
@@ -49,7 +50,7 @@ export const Vocabulary = () => {
         if (loading) return;
         setLoading(true);
         try {
-            const response = await axios.get('/api/vocab', {
+            const response = await axios.get('http://localhost:3000/api/vocab', {
                 params: {
                     find: searchbar || '',
                     category: category || '',
@@ -111,9 +112,12 @@ export const Vocabulary = () => {
         };
     }, []);
 
+
+    console.log(searchResults)
+
     return (
         <div className="flex items-center flex-col h-[calc(100%-4rem)]">
-            <div className="xl:text-[5rem] text-[4rem]  font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-base to-primary-content from-65% mt-10">
+            <div className="xl:text-[5rem] t    ext-[4rem]  font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-base to-primary-content from-65% mt-10">
                 SignBloom3D
             </div>
 
@@ -149,18 +153,24 @@ export const Vocabulary = () => {
                     <tbody>
                         {
                             searchResults.map((data, index) => (
+                                /* ${vocab} */
+                                <Link 
+                                state={{category: data.category, id: data.index }}
+                                to={`/displayvocab/${encodeURIComponent(data.category)}/${encodeURIComponent(data.name)}`}>
                                 <tr
                                     key={index}
                                     onClick={() => handleRowClick(index)}
                                     className={`text-sm text-gray-600 border-b-2 cursor-pointer ${activeRowIndex === index ? 'bg-secondary-content' : 'hover:bg-gray-200'}`}
                                 >
-                                    <td className="py-5 px-4 truncate">{data.name}</td>
+                                    <td className={"py-5 px-4 truncate"}>{data.name}</td>
                                     <td className="py-5 px-4 truncate">{data.category}</td>
                                     <td className="py-5 px-4 truncate">{data.parts_of_speech}</td>
                                     <td className="py-5 px-4 truncate">{data.description}</td>
                                     <td className="py-5 px-4 truncate">{data.author}</td>
                                     <td className="py-5 px-4 truncate">{data.updated_at}</td>
                                 </tr>
+                                </Link>
+
                             ))
                         }
                     </tbody>
