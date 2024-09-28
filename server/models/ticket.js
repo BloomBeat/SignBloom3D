@@ -19,7 +19,7 @@ const ticketSchema = new mongoose.Schema(
     description: { type: String, required: true },
     status: {
       type: String,
-      enum: ["open", "in progress", "closed", "on hold"],
+      enum: ["open", "in progress", "closed", "on hold", "canceled"],
       required: true,
     },
     created_at: { type: Date, required: true, default: Date.now },
