@@ -152,26 +152,30 @@ export const Vocabulary = () => {
                     </thead>
                     <tbody>
                         {
-                            searchResults.map((data, index) => (
+                            searchResults.map((data, index) => {
+                                
+                                console.log("Data at index",data,index);
+                                return(
                                 /* ${vocab} */
-                                <Link 
-                                state={{category: data.category, id: data.index }}
-                                to={`/displayvocab/${encodeURIComponent(data.category)}/${encodeURIComponent(data.name)}`}>
-                                <tr
-                                    key={index}
-                                    onClick={() => handleRowClick(index)}
-                                    className={`text-sm text-gray-600 border-b-2 cursor-pointer ${activeRowIndex === index ? 'bg-secondary-content' : 'hover:bg-gray-200'}`}
-                                >
-                                    <td className={"py-5 px-4 truncate"}>{data.name}</td>
-                                    <td className="py-5 px-4 truncate">{data.category}</td>
-                                    <td className="py-5 px-4 truncate">{data.parts_of_speech}</td>
-                                    <td className="py-5 px-4 truncate">{data.description}</td>
-                                    <td className="py-5 px-4 truncate">{data.author}</td>
-                                    <td className="py-5 px-4 truncate">{data.updated_at}</td>
-                                </tr>
-                                </Link>
-
-                            ))
+                                    <Link 
+                                    to={`/displayvocab/${data._id}`}
+                                    key={data._id}
+                                    >
+                                    <tr
+                                        key={data._id}
+                                        onClick={() => handleRowClick(data._id)}
+                                        className={`text-sm text-gray-600 border-b-2 cursor-pointer ${activeRowIndex === index ? 'bg-secondary-content' : 'hover:bg-gray-200'}`}
+                                    >
+                                        <td className={"py-5 px-4 truncate"}>{data.name}</td>
+                                        <td className="py-5 px-4 truncate">{data.category}</td>
+                                        <td className="py-5 px-4 truncate">{data.parts_of_speech}</td>
+                                        <td className="py-5 px-4 truncate">{data.description}</td>
+                                        <td className="py-5 px-4 truncate">{data.author}</td>
+                                        <td className="py-5 px-4 truncate">{data.updated_at}</td>
+                                    </tr>
+                                    </Link>
+                                );
+                            })
                         }
                     </tbody>
                 </table>

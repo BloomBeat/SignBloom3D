@@ -1,42 +1,57 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 /* import Model from "./_components/Model"; */
 import CustomBtn from "../../components/Button";
 import { Link } from "react-router-dom";
 import StatusVocab from "./_components/Statusvocab";
-import axios from 'axios';
+import api from '../../hooks/api';
 
 const DisplayVocab = () => {
-  const { category:categoryParam, vocabulary:vocabParam } = useParams();
-  const category = decodeURIComponent(categoryParam)
-  const vocabulary = decodeURIComponent(vocabParam)
+  const { id:idParam} = useParams();
+  // const {state} = useLocation()
+// location object variable
+//   {
+//     "pathname": "/displayvocab",
+//     "search": "",
+//     "hash": "",
+//     "state": {
+//         "id": "66f2de6417c3e2053d33821f"
+//     },
+//     "key": "ohdki0bj"
+// }
+  // console.log(state._id)
+
+  // const category = decodeURIComponent(categoryParam)
+  // const vocabulary = decodeURIComponent(vocabParam)
+  const id = decodeURIComponent(idParam)
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => { // use to trigger 
     const fetchVocabularies = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/vocab/word/${category}`);
-        setData(response.data);
+        const response = await api.get(`http://localhost:3000/api/vocab/word/${id}`);
+        setData(response.data); 
+        // console.log (response.data)
         setError(null);
-        setLoading(false);
+        setLoading(false); 
       } catch (err) {
         console.error("Error fetching vocabularies:", err);
         setError("Error fetching vocabularies. Please try again later.");
         setLoading(false);
       }
-    };
+    }; 
 
-    if (category) {
-      fetchVocabularies();
-    }
-  }, [category, vocabulary, error]);
-
-  const modelUrl = `/models/${vocabulary}.glb`;
+    // if (category) {
+       fetchVocabularies();
+    // }
+  }, [id]);
+  
+  // const modelUrl = `/models/${vocabulary}.glb`;
 
   const handleReportIssue = () => {
     setIsModalOpen(true);
@@ -64,7 +79,7 @@ const DisplayVocab = () => {
         </figure>
 
         <div className="w-1/2 p-10 flex flex-col">
-          <h1 className="font-bold text-4xl">{vocabulary}</h1>
+          {/* <h1 className="font-bold text-4xl">{vocabulary}</h1> */}
           <div className="divider"></div>
 
           {loading ? (
@@ -116,7 +131,7 @@ const DisplayVocab = () => {
               )}
 
               {/* StatusVocab component */}
-              <StatusVocab vocabulary={vocabulary} />
+              {/* <StatusVocab vocabulary={vocabulary} /> */}
 
               {/* Button controls */}
               <div className="flex gap-4 p-4">

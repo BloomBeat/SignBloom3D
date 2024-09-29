@@ -14,5 +14,5 @@ export const RoutePaths = {
   ABOUTUS: "/aboutus",
   REGISTER: "/register",
   LOGIN: "/login",
-  DISPLAYVOCAB: "/displayvocab/:category/:vocabulary"
+  DISPLAYVOCAB: "/displayvocab/:id"
 };

@@ -89,9 +89,8 @@ export const vocabSuggestions = async (req, res) => {
 
 export const displayVocab = async (req, res) => {
   try {
-    const { id:idParams } = req.params;
-    const id = decodeURIComponent(idParams);    const vocabId = mongoose.Types.ObjectId.createFromHexString(id);
-    console.log(vocabId);
+    const { id } = req.params;
+    const vocabId = mongoose.Types.ObjectId.createFromHexString(id);
     const pipeline = [
       { $match: { _id: vocabId } },
       // Join with categories collection to get the category name
