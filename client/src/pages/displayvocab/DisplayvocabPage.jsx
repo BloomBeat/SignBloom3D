@@ -1,37 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense,useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-/* import Model from "./_components/Model"; */
+import Model from "./_components/Model";
 import CustomBtn from "../../components/Button";
 import { Link } from "react-router-dom";
-import StatusVocab from "./_components/Statusvocab";
+// import StatusVocab from "./_components/Statusvocab";
 import api from '../../hooks/api';
 
 const DisplayVocab = () => {
-  const { id:idParam} = useParams();
+  const{ id:idParam} = useParams();
   // const {state} = useLocation()
-// location object variable
-//   {
-//     "pathname": "/displayvocab",
-//     "search": "",
-//     "hash": "",
-//     "state": {
-//         "id": "66f2de6417c3e2053d33821f"
-//     },
-//     "key": "ohdki0bj"
-// }
   // console.log(state._id)
-
+    // location object variable
+    //   {
+    //     "pathname": "/displayvocab",
+    //     "search": "",
+    //     "hash": "",
+    //     "state": {
+    //         "id": "66f2de6417c3e2053d33821f"
+    //     },
+    //     "key": "ohdki0bj"
+    //   }
   // const category = decodeURIComponent(categoryParam)
   // const vocabulary = decodeURIComponent(vocabParam)
   const id = decodeURIComponent(idParam)
   const [data, setData] = useState({});
+  const [animationClip, setAnimationClip] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => { // use to trigger 
+  useEffect(() => {
     const fetchVocabularies = async () => {
       try {
         const response = await api.get(`http://localhost:3000/api/vocab/word/${id}`);
@@ -46,13 +46,9 @@ const DisplayVocab = () => {
       }
     }; 
 
-    // if (category) {
-       fetchVocabularies();
-    // }
+    fetchVocabularies();
   }, [id]);
   
-  // const modelUrl = `/models/${vocabulary}.glb`;
-
   const handleReportIssue = () => {
     setIsModalOpen(true);
   };
@@ -61,20 +57,23 @@ const DisplayVocab = () => {
     <div className="h-screen flex flex-col">
       <div className="m-4 h-full flex">
         <figure className="w-1/2 bg-gray-100 rounded-lg p-4">
-          <Canvas camera={{ position: [0, 1, 1.2], fov: 45 }}>
+          <Canvas camera={{ position: [0, 1, 1.5], fov:100 }}> 
+            <Suspense fallback={null}>
             <ambientLight intensity={4} />
             <directionalLight position={[5, 10, 7.5]} intensity={1}/>
-            {/* <Model
-              modelUrl={modelUrl}
-              position={[0, 0, 0]}
-              scale={[0.01, 0.01, 0.01]}
-            />  */}
+            <Model animationClip={animationClip}
+              // modelUrl={modelUrl} 
+              // pass {action} by.prase json
+              //position={[0, 0, 0]}
+              //scale={[0.01, 0.01, 0.01]}
+            /> 
             <OrbitControls
               enableRotate={false}
               enableZoom={false}
               enablePan={false}
               target={[0, 1, 0]}
             />
+            </Suspense>s\
           </Canvas>
         </figure>
 
@@ -104,10 +103,10 @@ const DisplayVocab = () => {
                 ชนิดของคำ :{" "}
                 <span className="font-normal">{data.parts_of_speech || "N/A"}</span>
               </a>
-              {/* <a className="text-xl font-semibold">
+              <a className="text-xl font-semibold">
                 หมวดหมู่ :{" "}
                 <span className="font-normal">{data.category || "N/A"}</span>
-              </a> */}
+              </a> 
               <a className="text-xl font-semibold">
                 ความหมาย :{" "}
                 <span className="font-normal">{data.description || "N/A"}</span>
