@@ -14,12 +14,25 @@ import Navbaruser from "../components/Navbaruser.jsx";
 import { Vocabulary } from "../pages/vocabulary/VocabularyPage.jsx";
 import { AdminTicketPage } from "../pages/admin/AdminTicketPage.jsx"
 import { Login } from "../pages/login/Login.jsx"
+import {Toaster} from "react-hot-toast"
+import { Navigate } from "react-router-dom";
 // Will create all page below after get UI
 // import { Support } from "../pages/support/SupportPage.jsx";
 // import { AboutUs } from "../pages/aboutus/AboutUsPage.jsx";
 // import { Register } from "../pages/register/RegisterPage.jsx";
 // import { Login } from "../pages/login/LoginPage.jsx";
 
+function getCookie(name) {
+  const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+      const [key, value] = cookie.split('=');
+      acc[key] = decodeURIComponent(value);
+      return acc;
+  }, {});
+
+  return cookies[name];
+}
+
+const userToken = getCookie("SessionID");
 
 export const Router = () => (
   <>
@@ -29,7 +42,7 @@ export const Router = () => (
       element={
         // What will be rendered
         <Layout>
-          <Navbaruser/>
+          <Navbaruser userToken={userToken}/>
           <HomePage />
         </Layout>
       }
@@ -40,7 +53,7 @@ export const Router = () => (
       element={
         // What will be rendered
         <Layout>
-          <Navbaruser/>
+          <Navbaruser userToken={userToken}/>
           <AdminTicketPage/>
         </Layout>
       }
@@ -49,7 +62,7 @@ export const Router = () => (
       path="*" // localhost:5173/3D 
       element={
         <Layout>
-          <Navbaruser/>
+          <Navbaruser userToken={userToken}/>
           <NotFound />
         </Layout>
       }
@@ -58,7 +71,7 @@ export const Router = () => (
       path={RoutePaths.VOCAB} // localhost:5173/vocabulary
       element={
         <Layout>
-          <Navbaruser/>
+          <Navbaruser userToken={userToken}/>
           <Vocabulary/>
         </Layout>
       }
@@ -68,7 +81,7 @@ export const Router = () => (
       path="support" // localhost:5173/support
       element={
         <Layout>
-          <Navbaruser/>
+          <Navbaruser userToken={userToken}/>
           <Support/>
         </Layout>
       }
@@ -77,7 +90,7 @@ export const Router = () => (
       path="aboutus" // localhost:5173/aboutus
       element={
         <Layout>
-          <Navbaruser/>
+          <Navbaruser userToken={userToken}/>
           <AboutUs/>
         </Layout>
       }
@@ -86,20 +99,25 @@ export const Router = () => (
       path="register" // localhost:5173/register
       element={
         <Layout>
-          <Navbaruser/>
+          <Navbaruser userToken={userToken}/>
           <Register/>
         </Layout>
       }
     /> */}
     <Route
-      path="login" // localhost:5173/login
-      element={
+      path={RoutePaths.LOGIN} // localhost:5173/login
+      element={!userToken ? 
         <Layout>
-          <Navbaruser/>
+          <Navbaruser userToken={userToken}/>
           <Login/>
         </Layout>
+        : <Navigate to={"/"} />
       }
     />
   </Routes>
+  <Toaster
+  position="bottom-center"
+  reverseOrder={true}
+/>
   </>
 );
