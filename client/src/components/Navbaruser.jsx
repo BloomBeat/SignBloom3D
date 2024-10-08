@@ -98,7 +98,7 @@ const Navbaruser = ({ userToken }) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 mt-6 w-48 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none rounded-md">
+                    <Menu.Items className="absolute right-0 mt-4 w-48 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none rounded-md">
                       <div className="py-1">
                         <Menu.Item>
                           {({ active }) => (
