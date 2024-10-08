@@ -16,7 +16,6 @@ const Navbaruser = ({ userToken }) => {
         {},
         { withCredentials: true }
       );
-      toast.success(response.data.message);
       window.location.reload();
     } catch (error) {
       toast.error(error.response.data.error || "An error occurred");
@@ -42,15 +41,15 @@ const Navbaruser = ({ userToken }) => {
             </Link>
           </div>
 
-          <div className="flex items-center gap-8 text-gray-90 px-3 py-2 text-sm font-medium">
+          <div className="flex items-center gap-4 text-gray-90 px-3 py-2 text-sm font-medium">
             {/* Navigation Links */}
-            <Link to="/vocabulary" className="hover:bg-gray-100 rounded-md">
+            <Link to="/vocabulary" className="hover:bg-gray-100 rounded-md p-2">
               คำศัพท์
             </Link>
-            <Link to="/support" className="hover:bg-gray-100 rounded-md">
+            <Link to="/support" className="hover:bg-gray-100 rounded-md p-2">
               สนับสนุน
             </Link>
-            <Link to="/aboutus" className="hover:bg-gray-100 rounded-md">
+            <Link to="/aboutus" className="hover:bg-gray-100 rounded-md p-2">
               เกี่ยวกับเรา
             </Link>
 
@@ -69,7 +68,11 @@ const Navbaruser = ({ userToken }) => {
               </>
             ) : (
               <div className="relative flex flex-row items-center gap-1">
-                {
+
+                {/* Dropdown Menu */}
+                <Menu as="div" className="relative inline-block text-left">
+                  <Menu.Button className="flex items-center gap-1">
+                  {
                 decodedToken?.picture_profile ? (
                   <img
                     src={decodedToken.picture_profile}
@@ -84,10 +87,6 @@ const Navbaruser = ({ userToken }) => {
                     className="w-9 h-9 rounded-full object-cover"
                   />
                 )}
-
-                {/* Dropdown Menu */}
-                <Menu as="div" className="relative inline-block text-left">
-                  <Menu.Button className="flex items-center gap-1">
                     <ChevronDownIcon className="w-5 h-5 text-gray-500" />
                   </Menu.Button>
                   <Transition
