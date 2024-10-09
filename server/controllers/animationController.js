@@ -4,7 +4,7 @@ import axios from 'axios';
 export const getAnimationInfo = async (req, res) => {
     try {
         const {page, pageSize} = req.query
-        const animationInfo = await axios.get('https://recorder.justsigns.co/api/animation/info', {
+        const animationInfo = await axios.get(`${process.env.RECORDER_API_PATH}/animation/info`, {
             params: {
                 page: page, 
                 pageSize: pageSize
@@ -27,7 +27,7 @@ export const getAnimationInfo = async (req, res) => {
 export const getAnimationClip = async (req, res) => {
     try {
         const {id} = req.params;
-        const animationClip = await axios.get(`https://recorder.justsigns.co/api/animation/clip/${id}`);
+        const animationClip = await axios.get(`${process.env.RECORDER_API_PATH}/animation/clip/${id}`);
 
         res.status(200).json(animationClip.data);
 
