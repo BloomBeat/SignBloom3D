@@ -5,22 +5,31 @@ import * as THREE from 'three';
 import React, { useRef, useEffect } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
 
-export default function Model({animationClip,props}) {
+export default function Model({animationClip,isPaused, timeScale, props}) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF('/Alex_Rig_v2.4_rokoko_wface_aug30.glb');
   const { actions, mixer } = useAnimations(animations, group);
 
   function parseAnimationClip(json) {
     return THREE.AnimationClip.parse(json);
-  }
+  } // parse to convert json to animation
+
   useEffect(() => {
     if (animationClip) {
       const parsedClip = parseAnimationClip(animationClip);
-      if (parsedClip) {
-        mixer.clipAction(parsedClip).play();
-      }
+      const action =mixer.clipAction(parsedClip);  //combine mesh and animation
+       if (parsedClip){
+        action.setEffectiveTimeScale(timeScale||1);
+        
+        if (isPaused){
+          action.paused = true;
+        } else {
+          action.paused = false;
+          action.play();
+        }
+       }
     }
-  }, [animationClip, mixer]);
+  }, [animationClip,isPaused, timeScale, mixer]);
 
   return (
     <group ref={group} {...props} dispose={null}>

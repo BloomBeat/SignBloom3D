@@ -1,42 +1,29 @@
-import React, { Suspense,useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import React, { Suspense,useEffect, useState, useRef } from "react";
+import { useParams, useLocation, Link } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import Model from "./_components/Model";
 import CustomBtn from "../../components/Button";
-import { Link } from "react-router-dom";
 // import StatusVocab from "./_components/Statusvocab";
 import api from '../../hooks/api';
 
 const DisplayVocab = () => {
   const{ id:idParam} = useParams();
-  // const {state} = useLocation()
-  // console.log(state._id)
-    // location object variable
-    //   {
-    //     "pathname": "/displayvocab",
-    //     "search": "",
-    //     "hash": "",
-    //     "state": {
-    //         "id": "66f2de6417c3e2053d33821f"
-    //     },
-    //     "key": "ohdki0bj"
-    //   }
-  // const category = decodeURIComponent(categoryParam)
-  // const vocabulary = decodeURIComponent(vocabParam)
   const id = decodeURIComponent(idParam)
   const [data, setData] = useState({});
   const [animationClip, setAnimationClip] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);  
 
+  //Fetch vocab data
   useEffect(() => {
     const fetchVocabularies = async () => {
       try {
         const response = await api.get(`http://localhost:3000/api/vocab/word/${id}`);
         setData(response.data); 
-        // console.log (response.data)
         setError(null);
         setLoading(false); 
       } catch (err) {
@@ -45,9 +32,36 @@ const DisplayVocab = () => {
         setLoading(false);
       }
     }; 
-
     fetchVocabularies();
+
   }, [id]);
+
+  // Fetch animation 
+  useEffect(() => {
+    const fetchAnimationClip = async () => {
+      try {
+        const animationId = data._id; // Assuming the animation clip ID is part of the vocab data
+        const response = await api.get(`https://recorder.justsigns.co/api/animation/clip/66d3dee508841b0af4120272`);
+        setAnimationClip(response.data.animationClip); // Using the _id as the prop for the Model component
+      } catch (err) {
+        console.error("Error fetching animation clip:", err);
+        setAnimationClip(null);
+      }
+    };
+    fetchAnimationClip();
+
+  }, [data.animation_clip_id, id]);
+
+  // Handle click to pause/play
+  const handleModelClick=()=>{
+    setIsPaused(prev => !prev);
+  };
+
+  //Update elapsed time every second
+  const handleAnimationTimeUpdate = (elapsed, duration) => {
+    setElapsedTime(elapsed);
+    setAnimationDuration(duration);
+  };
   
   const handleReportIssue = () => {
     setIsModalOpen(true);
@@ -57,15 +71,17 @@ const DisplayVocab = () => {
     <div className="h-screen flex flex-col">
       <div className="m-4 h-full flex">
         <figure className="w-1/2 bg-gray-100 rounded-lg p-4">
-          <Canvas camera={{ position: [0, 1, 1.5], fov:100 }}> 
+          <Canvas 
+            onClick={handleModelClick} 
+            camera={{ position: [0, 1, 1.5], fov:80
+          }}> 
             <Suspense fallback={null}>
             <ambientLight intensity={4} />
             <directionalLight position={[5, 10, 7.5]} intensity={1}/>
-            <Model animationClip={animationClip}
-              // modelUrl={modelUrl} 
-              // pass {action} by.prase json
-              //position={[0, 0, 0]}
-              //scale={[0.01, 0.01, 0.01]}
+            <Model 
+              animationClip={animationClip}
+              isPaused={isPaused} 
+              onAnimationTimeUpdate={handleAnimationTimeUpdate}
             /> 
             <OrbitControls
               enableRotate={false}
@@ -73,14 +89,12 @@ const DisplayVocab = () => {
               enablePan={false}
               target={[0, 1, 0]}
             />
-            </Suspense>s\
+            </Suspense>
           </Canvas>
         </figure>
 
         <div className="w-1/2 p-10 flex flex-col">
-          {/* <h1 className="font-bold text-4xl">{vocabulary}</h1> */}
           <div className="divider"></div>
-
           {loading ? (
             <div className="text-primary">Loading vocabulary...</div>
           ) : error ? (
