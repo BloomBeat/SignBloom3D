@@ -19,8 +19,7 @@ export default function Model({animationClip,isPaused, timeScale, props}) {
       const parsedClip = parseAnimationClip(animationClip);
       const action =mixer.clipAction(parsedClip);  //combine mesh and animation
        if (parsedClip){
-        action.setEffectiveTimeScale(timeScale||1);
-        
+        // action.setEffectiveTimeScale(timeScale||1);
         if (isPaused){
           action.paused = true;
         } else {

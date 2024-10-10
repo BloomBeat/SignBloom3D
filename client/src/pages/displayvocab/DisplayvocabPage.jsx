@@ -16,7 +16,7 @@ const DisplayVocab = () => {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [elapsedTime, setElapsedTime] = useState(0);  
+  // const [elapsedTime, setElapsedTime] = useState(0);  
 
   //Fetch vocab data
   useEffect(() => {
@@ -27,7 +27,6 @@ const DisplayVocab = () => {
         setError(null);
         setLoading(false); 
       } catch (err) {
-        console.error("Error fetching vocabularies:", err);
         setError("Error fetching vocabularies. Please try again later.");
         setLoading(false);
       }
@@ -41,10 +40,9 @@ const DisplayVocab = () => {
     const fetchAnimationClip = async () => {
       try {
         const animationId = data._id; // Assuming the animation clip ID is part of the vocab data
-        const response = await api.get(`https://recorder.justsigns.co/api/animation/clip/66d3dee508841b0af4120272`);
+        const response = await api.get(``);
         setAnimationClip(response.data.animationClip); // Using the _id as the prop for the Model component
       } catch (err) {
-        console.error("Error fetching animation clip:", err);
         setAnimationClip(null);
       }
     };
@@ -58,10 +56,10 @@ const DisplayVocab = () => {
   };
 
   //Update elapsed time every second
-  const handleAnimationTimeUpdate = (elapsed, duration) => {
-    setElapsedTime(elapsed);
-    setAnimationDuration(duration);
-  };
+  // const handleAnimationTimeUpdate = (elapsed, duration) => {
+  //   setElapsedTime(elapsed);
+  //   setAnimationDuration(duration);
+  // };
   
   const handleReportIssue = () => {
     setIsModalOpen(true);
@@ -81,7 +79,7 @@ const DisplayVocab = () => {
             <Model 
               animationClip={animationClip}
               isPaused={isPaused} 
-              onAnimationTimeUpdate={handleAnimationTimeUpdate}
+              // onAnimationTimeUpdate={handleAnimationTimeUpdate}
             /> 
             <OrbitControls
               enableRotate={false}
