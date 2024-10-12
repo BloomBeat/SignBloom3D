@@ -6,8 +6,6 @@ import {
   displayVocab,
   searchVocab,
   addVocab,
-  updateVocab,
-  deleteVocab,
 } from "../controllers/vocabController.js";
 
 const router = express.Router();
@@ -17,7 +15,5 @@ router.get("/category", getCategories); // Use the controller function as the ro
 router.get("/word/:id", displayVocab);
 router.get("/search", searchVocab);
 router.post("/", addVocab);
-router.patch("/:id", updateVocab);
-router.delete("/:id", deleteVocab);
 
 export default router;

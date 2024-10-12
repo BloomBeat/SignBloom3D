@@ -226,7 +226,3 @@ export const addVocab = async (req, res) => {
     res.status(400).json({ error: "Failed to add vocabulary" });
   }
 };
-
-export const updateVocab = async (req, res) => {};
-
-export const deleteVocab = async (req, res) => {};
