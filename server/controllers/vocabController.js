@@ -201,9 +201,19 @@ export const searchVocab = async (req, res) => {
 
 export const addVocab = async (req, res) => {
   try {
-    const { category_id, name, description, parts_of_speech, image, author } =
-      req.body;
+    const {
+      category_id,
+      name,
+      description,
+      parts_of_speech,
+      image,
+      author,
+      animation_clip_id,
+      intro_gap,
+      outro_gap,
+    } = req.body;
 
+    // Check if a vocabulary with the same name and category_id already exists
     const existingVocab = await Vocabulary.findOne({ name, category_id });
     if (existingVocab) {
       return res.status(400).json({ error: "Vocabulary already exists" });
@@ -216,6 +226,9 @@ export const addVocab = async (req, res) => {
       parts_of_speech,
       image: image || "vocab_placeholder",
       author,
+      animation_clip_id,
+      intro_gap,
+      outro_gap,
     });
 
     const savedVocab = await newVocab.save();
