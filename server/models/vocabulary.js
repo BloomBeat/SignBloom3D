@@ -11,7 +11,7 @@ const vocabularySchema = new mongoose.Schema({
     required: true,
   },
   description: {
-    type: String, 
+    type: String,
     required: true,
   },
   parts_of_speech: {
@@ -33,6 +33,7 @@ const vocabularySchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  //TODO : add 3 fileds more
 });
 
 const Vocabulary = mongoose.model("vocabularies", vocabularySchema);

@@ -198,3 +198,30 @@ export const searchVocab = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch suggestions" });
   }
 };
+
+export const updateVocab = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const vocabId = mongoose.Types.ObjectId.createFromHexString(id);
+    const { name, description, parts_of_speech, category_id } = req.body;
+    const updatedVocab = await Vocabulary.findByIdAndUpdate(
+      vocabId,
+      {
+        name,
+        description,
+        parts_of_speech,
+        category_id,
+        updated_at: new Date(),
+        //TODO : add function for 3 fileds
+      },
+      { new: true }
+    );
+    if (!updatedVocab) {
+      return res.status(404).json({ error: "Word not found" });
+    }
+    res.status(200).json(updatedVocab);
+  } catch (err) {
+    console.error("Failed to update word:", err);
+    res.status(500).json({ error: "Failed to update word" });
+  }
+};
