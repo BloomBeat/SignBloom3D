@@ -198,3 +198,24 @@ export const searchVocab = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch suggestions" });
   }
 };
+
+//TODO : make it able to delete
+export const deleteVocab = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedVocab = await Vocabulary.findByIdAndDelete(id);
+
+    if (!deletedVocab) {
+      return res.status(404).json({ message: "Vocabulary not found" }); //currenltly not working here
+    }
+
+    res.status(200).json({
+      message: `Deleted vocabulary ${id} successfully`,
+      vocabulary: deletedVocab,
+    });
+  } catch (err) {
+    console.error("Failed to delete vocabulary:", err);
+    res.status(500).json({ error: "Failed to delete vocabulary" });
+  }
+};
