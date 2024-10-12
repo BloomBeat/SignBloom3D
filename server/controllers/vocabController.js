@@ -202,7 +202,7 @@ export const searchVocab = async (req, res) => {
 export const addVocab = async (req, res) => {
   try {
     const {
-      category_id,
+      category,
       name,
       description,
       parts_of_speech,
@@ -213,14 +213,24 @@ export const addVocab = async (req, res) => {
       outro_gap,
     } = req.body;
 
-    // Check if a vocabulary with the same name and category_id already exists
-    const existingVocab = await Vocabulary.findOne({ name, category_id });
+    // Find the category by name
+    const categoryDoc = await Category.findOne({ category: category });
+    if (!categoryDoc) {
+      return res.status(400).json({ error: "Category not found" });
+    }
+
+    // Check if the vocabulary already exists
+    const existingVocab = await Vocabulary.findOne({
+      name,
+      category_id: categoryDoc._id,
+    });
     if (existingVocab) {
       return res.status(400).json({ error: "Vocabulary already exists" });
     }
 
     const newVocab = new Vocabulary({
-      category_id,
+      category_id: categoryDoc._id,
+      category,
       name,
       description,
       parts_of_speech,
