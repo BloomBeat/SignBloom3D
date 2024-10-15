@@ -5,6 +5,7 @@ import {
   getCategories,
   displayVocab,
   searchVocab,
+  addVocab,
 } from "../controllers/vocabController.js";
 
 const router = express.Router();
@@ -13,4 +14,6 @@ router.get("/", vocabSuggestions); // Use the controller function as the route h
 router.get("/category", getCategories); // Use the controller function as the route handler
 router.get("/word/:id", displayVocab);
 router.get("/search", searchVocab);
+router.post("/", addVocab);
+
 export default router;

@@ -198,3 +198,54 @@ export const searchVocab = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch suggestions" });
   }
 };
+
+export const addVocab = async (req, res) => {
+  try {
+    const {
+      category,
+      name,
+      description,
+      parts_of_speech,
+      image,
+      author,
+      animation_clip_id,
+      intro_gap,
+      outro_gap,
+    } = req.body;
+
+    // Find the category by name
+    const categoryDoc = await Category.findOne({ category: category });
+    if (!categoryDoc) {
+      return res.status(400).json({ error: "Category not found" });
+    }
+
+    // Check if the vocabulary already exists
+    const existingVocab = await Vocabulary.findOne({
+      name,
+      category_id: categoryDoc._id,
+    });
+    if (existingVocab) {
+      return res.status(400).json({ error: "Vocabulary already exists" });
+    }
+
+    const newVocab = new Vocabulary({
+      category_id: categoryDoc._id,
+      category,
+      name,
+      description,
+      parts_of_speech,
+      image: image || "vocab_placeholder",
+      author,
+      animation_clip_id,
+      intro_gap,
+      outro_gap,
+    });
+
+    const savedVocab = await newVocab.save();
+
+    res.status(201).json(savedVocab);
+  } catch (err) {
+    console.error("Failed to add vocabulary:", err);
+    res.status(400).json({ error: "Failed to add vocabulary" });
+  }
+};

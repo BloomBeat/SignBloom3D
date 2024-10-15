@@ -11,7 +11,7 @@ const vocabularySchema = new mongoose.Schema({
     required: true,
   },
   description: {
-    type: String, 
+    type: String,
     required: true,
   },
   parts_of_speech: {
@@ -32,6 +32,18 @@ const vocabularySchema = new mongoose.Schema({
   updated_at: {
     type: Date,
     default: Date.now,
+  },
+  animation_clip_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AnimationClip", // Assuming this is the name of the model in the Sign Recorder Database
+  },
+  intro_gap: {
+    type: Number, // Storing timestamp as a number
+    default: 0,
+  },
+  outro_gap: {
+    type: Number, // Storing timestamp as a number
+    default: 0,
   },
 });
 
